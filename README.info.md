@@ -64,7 +64,7 @@ Visual representation for visual learners:
 
 The iconnect bus is a virtual bus in the SystemC side that is in charge of sending data to the virtual devices(Modules) connected to it. 
 
-The virtual bus is capable of supporting master and slave devices. The slave devices can only be written/read to from the QEMU side i.e there is  no way for the module to talk back to the QEMU side. Master devices in the other hand, in theory,  should be able to talk to the QEMU side(User application). A perfect example of a master device is a DMA. The DMA is programmed to readand write data to a Uer application, so there has to be a bi-directional communication between SystemC and QEMU
+The virtual bus is capable of supporting master and slave devices. Without going into formal denefinitions, the best way to differentiate between master and slaves is that slaves only have a target socket while masters have a target socket and an initiator socket. A master is able to both repond to events but at the same time, it is able to start events. 
 
 
 ## ADDING YOUR OWN MODULES
