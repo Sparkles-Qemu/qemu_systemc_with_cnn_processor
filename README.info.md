@@ -57,7 +57,7 @@ All the target now has to do is to provide an implementation for the b_transport
 For a complete example of the above snippets go to : https://www.edaplayground.com/x/56Q4
 
 Visual representation for visual learners:
-![Init/target socket](/Init_target socket.png)
+![Init/target socket](/Init_target%20socket.png)
 
 
 ## VIRTUAL BUS USED BY THE COSIMULATION
