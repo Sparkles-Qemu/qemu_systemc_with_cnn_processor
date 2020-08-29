@@ -73,7 +73,7 @@ bus.memmap(0xa0000000ULL, 0x100 - 1,
 In this example the virtual bus is named "bus" and the user maps a SystemC module named debug. The memmap function takes care of mapping the target socket from the debug device(debug.socket) to the virtual address 0xa0000000ULL. The second parameter, 0x100 - 1, is used to describe the size of each transaction that this module can handle. The third parameter is the mode of the device. Xilinx recommends always using RELATIVE mode. The fourth parameter tells the memmap function if you want to bind the target socket to a specific initiator socket within the virtual bus. In most cases, you will end up using -1 because you do not really care to which initiator socket the target socket is binded to; you only care that the target gets binded. 
 
 Visual Representation of virtual bus:
-![Virtual Bus](/Virtual%20Bus.png)
+![Virtual Bus](/Virtual%20Bus%20.png)
 
 In order to communicate with the systemc modules from the QEMU side, you need to mmap to /dev/mem to write/read to the virtual address. From the QEMU side the virtual address that the module was mapped to is treated as a physical address. From a user application, the user can directly memcpy to this address. 
 
