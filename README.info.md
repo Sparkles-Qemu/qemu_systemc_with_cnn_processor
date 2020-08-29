@@ -57,6 +57,7 @@ All the target now has to do is to provide an implementation for the b_transport
 For a complete example of the above snippets go to : https://www.edaplayground.com/x/56Q4
 
 Visual representation for visual learners:
+
 ![Init/target socket](/Init_target%20socket.png)
 
 
@@ -65,7 +66,7 @@ Visual representation for visual learners:
 
 This is a straight foward process. All you need to do is connect the target socket from the SystemC module to the virtual bus with the function memmap(). This function is used to map the module to a virtual address that can be writen/read to/from the QEMU side.
 
-# Example from Xilinx co-simulation:
+Example from Xilinx co-simulation:
 
 bus.memmap(0xa0000000ULL, 0x100 - 1,
 				ADDRMODE_RELATIVE, -1, debug.socket);
@@ -73,6 +74,7 @@ bus.memmap(0xa0000000ULL, 0x100 - 1,
 In this example the virtual bus is named "bus" and the user maps a SystemC module named debug. The memmap function takes care of mapping the target socket from the debug device(debug.socket) to the virtual address 0xa0000000ULL. The second parameter, 0x100 - 1, is used to describe the size of each transaction that this module can handle. The third parameter is the mode of the device. Xilinx recommends always using RELATIVE mode. The fourth parameter tells the memmap function if you want to bind the target socket to a specific initiator socket within the virtual bus. In most cases, you will end up using -1 because you do not really care to which initiator socket the target socket is binded to; you only care that the target gets binded. 
 
 Visual Representation of virtual bus:
+
 ![Virtual Bus](/Virtual%20Bus%20.png)
 
 In order to communicate with the systemc modules from the QEMU side, you need to mmap to /dev/mem to write/read to the virtual address. From the QEMU side the virtual address that the module was mapped to is treated as a physical address. From a user application, the user can directly memcpy to this address. 
