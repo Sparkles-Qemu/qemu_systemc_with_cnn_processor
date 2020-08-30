@@ -102,11 +102,11 @@ In this example, SYSTEMC_DEVICE_ADDR represents the addressed that the SystemC m
 Visual representation of QEMU communicating with a SystemC module:
 
 
-## COMPONENTS THAT YOU PLACE A BLACKBOX
+## COMPONENTS THAT YOU CAN BLACKBOX
 
 The point of this section is to save you time when something goes wrong. There are many components that are hidden from the user in the co-simulation. This is a good thing as long as you do not get side track by them.
 
-One of the major components that is abstracted from the user is the driver that takes care of seding the payload tothe SystemC side. All you need to know is that it exist and it works. If for some reason you find yourself trying to figure out what is happening, you are wasting your time. If there is an  error(unexpected behavior) between QEMU and SystemC, 99% of time is an user error and not a driver error.
+One of the major components that is abstracted from the user is the driver that takes care of seding the payload to the SystemC side. All you need to know is that it exist and it works. If for some reason you find yourself trying to figure out what is happening in the driver side, you are wasting your time. If there is an  error(unexpected behavior) between QEMU and SystemC, 99% of time is an user error and not a driver error.
 
 
 
