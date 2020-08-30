@@ -95,20 +95,19 @@ if(base_ptr == NULL) {
 	//error handling 
 }
 
-memcpy(base_ptr, [USER_DATA], sizeof USER_DATA); //USER_DATA IT's A PLACE HOLDER
+memcpy(base_ptr, [USER_DATA], sizeof USER_DATA); //USER_DATA IT'S A PLACE HOLDER
 
-In this example, SYSTEMC_DEVICE_ADDR represents the addressed that the SystemC module was map to by the virtual bus. After the user has correctly obtained a pointer through mmap, the user can do direct read and writes to this address.
+In this example, SYSTEMC_DEVICE_ADDR represents the addressed that the SystemC module was mapped to by the virtual bus. After the user has correctly obtained a pointer through mmap, the user can do direct read and writes to this address.
 
 Visual representation of QEMU communicating with a SystemC module:
 
 
 ## COMPONENTS THAT YOU PLACE A BLACKBOX
 
- - Driver that takes care of sending payloads to the SytemC side( This was my biggest time waster)
- - Mechanism to communicate with QEMU from SystemC
- - Add images to show blackbox components 
- - Ask aly for more sections
+The point of this section is to save you time when something goes wrong. There are many components that are hidden from the user in the co-simulation. This is a good thing as long as you do not get side track by them.
+
+One of the major components that is abstracted from the user is the driver that takes care of seding the payload tothe SystemC side. All you need to know is that it exist and it works. If for some reason you find yourself trying to figure out what is happening, you are wasting your time. If there is an  error(unexpected behavior) between QEMU and SystemC, 99% of time is an user error and not a driver error.
 
 
 
-i
+Visual represention of blackbox:
