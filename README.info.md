@@ -56,7 +56,7 @@ All the target now has to do is to provide an implementation for the b_transport
 
 For a complete example of the above snippets go to : https://www.edaplayground.com/x/56Q4
 
-Visual representation for visual learners:
+Visual representation of taret/init sockets:
 
 ![Init/target socket](/Init_target%20socket.png)
 
@@ -109,5 +109,5 @@ The point of this section is to save you time when something goes wrong. There a
 One of the major components that is abstracted from the user is the driver that takes care of seding the payload to the SystemC side. All you need to know is that it exist and it works. If for some reason you find yourself trying to figure out what is happening in the driver side, you are wasting your time. If there is an  error(unexpected behavior) between QEMU and SystemC, 99% of time is an user error and not a driver error.
 
 
-
 Visual represention of blackbox:
+![Blackbox](/Blackbox.png)
