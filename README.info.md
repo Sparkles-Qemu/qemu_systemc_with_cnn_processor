@@ -84,6 +84,7 @@ User level application example:
 unsigned page_size=sysconf(_SC_PAGESIZE); //we are mapping a block that is a the size of a page
 
 //open virtual file to write to absolute address
+
 fd=open("/dev/mem",O_RDWR);
 if(fd<1) {
   exit(-1);
@@ -98,9 +99,6 @@ if(base_ptr == NULL) {
 memcpy(base_ptr, [USER_DATA], sizeof USER_DATA); //USER_DATA IT'S A PLACE HOLDER
 
 In this example, SYSTEMC_DEVICE_ADDR represents the addressed that the SystemC module was mapped to by the virtual bus. After the user has correctly obtained a pointer through mmap, the user can do direct read and writes to this address.
-
-Visual representation of QEMU communicating with a SystemC module:
-
 
 ## COMPONENTS THAT YOU CAN BLACKBOX
 
