@@ -79,7 +79,29 @@ Visual Representation of virtual bus:
 
 In order to communicate with the systemc modules from the QEMU side, you need to mmap to /dev/mem to write/read to the virtual address. From the QEMU side the virtual address that the module was mapped to is treated as a physical address. From a user application, the user can directly memcpy to this address. 
 
-TODO: Insert code snippets both from user application and systemC side  
+User level application example:
+
+unsigned page_size=sysconf(_SC_PAGESIZE); //we are mapping a block that is a the size of a page
+
+//open virtual file to write to absolute address
+fd=open("/dev/mem",O_RDWR);
+if(fd<1) {
+  exit(-1);
+}
+
+base_ptr = mmap(NULL,page_size,PROT_READ|PROT_WRITE,MAP_SHARED,fd, SYSTEMC_DEVICE_ADDR);
+
+if(base_ptr == NULL) {
+	//error handling 
+}
+
+memcpy(base_ptr, [USER_DATA], sizeof USER_DATA); //USER_DATA IT's A PLACE HOLDER
+
+In this example, SYSTEMC_DEVICE_ADDR represents the addressed that the SystemC module was map to by the virtual bus. After the user has correctly obtained a pointer through mmap, the user can do direct read and writes to this address.
+
+Visual representation of QEMU communicating with a SystemC module:
+
+
 ## COMPONENTS THAT YOU PLACE A BLACKBOX
 
  - Driver that takes care of sending payloads to the SytemC side( This was my biggest time waster)
@@ -89,4 +111,4 @@ TODO: Insert code snippets both from user application and systemC side
 
 
 
-
+i
