@@ -56,7 +56,7 @@ All the target now has to do is to provide an implementation for the b_transport
 
 For a complete example of the above snippets go to : https://www.edaplayground.com/x/56Q4
 
-Visual representation for visual learners:
+Visual representation of taret/init sockets:
 
 ![Init/target socket](/Init_target%20socket.png)
 
@@ -84,6 +84,7 @@ User level application example:
 unsigned page_size=sysconf(_SC_PAGESIZE); //we are mapping a block that is a the size of a page
 
 //open virtual file to write to absolute address
+
 fd=open("/dev/mem",O_RDWR);
 if(fd<1) {
   exit(-1);
@@ -99,15 +100,12 @@ memcpy(base_ptr, [USER_DATA], sizeof USER_DATA); //USER_DATA IT'S A PLACE HOLDER
 
 In this example, SYSTEMC_DEVICE_ADDR represents the addressed that the SystemC module was mapped to by the virtual bus. After the user has correctly obtained a pointer through mmap, the user can do direct read and writes to this address.
 
-Visual representation of QEMU communicating with a SystemC module:
-
-
-## COMPONENTS THAT YOU PLACE A BLACKBOX
+## COMPONENTS THAT YOU CAN BLACKBOX
 
 The point of this section is to save you time when something goes wrong. There are many components that are hidden from the user in the co-simulation. This is a good thing as long as you do not get side track by them.
 
-One of the major components that is abstracted from the user is the driver that takes care of seding the payload tothe SystemC side. All you need to know is that it exist and it works. If for some reason you find yourself trying to figure out what is happening, you are wasting your time. If there is an  error(unexpected behavior) between QEMU and SystemC, 99% of time is an user error and not a driver error.
-
+One of the major components that is abstracted from the user is the driver that takes care of seding the payload to the SystemC side. All you need to know is that it exist and it works. If for some reason you find yourself trying to figure out what is happening in the driver side, you are wasting your time. If there is an  error(unexpected behavior) between QEMU and SystemC, 99% of time is an user error and not a driver error.
 
 
 Visual represention of blackbox:
+![Blackbox](/Blackbox.png)
