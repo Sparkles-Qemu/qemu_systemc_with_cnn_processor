@@ -82,9 +82,9 @@ int main(int argc, char *argv[])
   }
 
   if(error == 0)
-    printf("Test bench success");
+    printf("Test bench success\n");
   else
-    printf("Test bench error");
+    printf("Test bench error\n");
 
 	return 0; 
 }
