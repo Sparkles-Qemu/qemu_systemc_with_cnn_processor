@@ -8,6 +8,7 @@
 //my includes
 
 #define SYSTEMC_DEVICE_ADDR (0xa1000000ULL)
+#define SYSTEMC_DEVICE_ADDR (0xa1000000ULL)
 
 
 int main(int argc, char *argv[])

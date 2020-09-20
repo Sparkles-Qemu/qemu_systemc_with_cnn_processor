@@ -162,6 +162,7 @@ void processor_tb::test_bench()
 
   volatile bool startValidation = false;
   volatile int expected_output_index = 0;
+  volatile int ram_source_offset = 305; //some padding between input and output data
   volatile int validCounter = 8;
   volatile int invalidCounter = 1;
   int counter = 0;
@@ -188,6 +189,7 @@ void processor_tb::test_bench()
         if(expected_output[expected_output_index] == processor->streamOut)
         {
           std::cout << " ....assertion succuss!!" << std::endl;
+          processor->ramSource[ram_source_offset + expected_output_index] = processor->streamOut;
           expected_output_index++;
         }
         else
