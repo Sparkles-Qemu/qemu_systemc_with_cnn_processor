@@ -83,6 +83,9 @@ public:
 		return;
 	}
 
+  //
+  cout << "Made it to the DMA target socket callback " << endl;
+
 	if (trans.get_command() == tlm::TLM_READ_COMMAND)
 		memcpy(ptr, &mem[addr], len);
 	else if (cmd == tlm::TLM_WRITE_COMMAND)
