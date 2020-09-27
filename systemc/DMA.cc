@@ -6,6 +6,7 @@
 #include "vector"
 #include <string>
 #include <iostream>
+#include "tlm_utils/simple_target_socket.h"
 
 //-----------------------------------------------------
 // Design Name : DMA
@@ -38,9 +39,10 @@ struct Descriptor
 };
 
 // DMA module definition for MM2S and S2MM
-struct DMA : public sc_module
+struct DMA 
+: public sc_module
 {
-
+public:
   // Control Signals
   sc_in<bool> clk, reset, enable;
 
@@ -54,8 +56,44 @@ struct DMA : public sc_module
   DmaDirection direction;
   unsigned int current_ram_index;
   unsigned int x_count_remaining;
+	int descriptor_size;
+	int descriptor_size_word_align;
+	unsigned char *mem;
 
   const Descriptor default_descriptor = {0, 0, DmaState::SUSPENDED, 0, 0};
+
+  //Target socket and callback function
+  tlm_utils::simple_target_socket<DMA> socket;
+	void b_transport(tlm::tlm_generic_payload& trans, sc_time& delay)
+	{
+  tlm::tlm_command cmd = trans.get_command();
+	sc_dt::uint64    addr = trans.get_address();
+	unsigned char*   ptr = trans.get_data_ptr();
+	unsigned int     len = trans.get_data_length();
+	unsigned char*   byt = trans.get_byte_enable_ptr();
+
+	if (addr > sc_dt::uint64(descriptor_size_word_align)) {
+		trans.set_response_status(tlm::TLM_ADDRESS_ERROR_RESPONSE);
+		SC_REPORT_FATAL("Memory", "Unsupported access\n");
+		return;
+	}
+	if (byt != 0) {
+		trans.set_response_status(tlm::TLM_BYTE_ENABLE_ERROR_RESPONSE);
+		SC_REPORT_FATAL("Memory", "Unsupported access\n");
+		return;
+	}
+
+	if (trans.get_command() == tlm::TLM_READ_COMMAND)
+		memcpy(ptr, &mem[addr], len);
+	else if (cmd == tlm::TLM_WRITE_COMMAND)
+		memcpy(&mem[addr], ptr, len);
+
+	//delay += LATENCY;
+
+	trans.set_dmi_allowed(true);
+	trans.set_response_status(tlm::TLM_OK_RESPONSE);
+
+	}
 
   // Prints descriptor list, useful for debugging
   void print_descriptors()
@@ -157,6 +195,10 @@ struct DMA : public sc_module
     this->ram = _ram;
     this->stream(_stream);
 
+		this->descriptor_size = sizeof(Descriptor);
+		this->descriptor_size_word_align = ((descriptor_size / 4) + 1) * 4;
+
+		this->mem = new unsigned char[descriptor_size_word_align];
     std::cout << "DMA Module: " << name << " has been instantiated " << std::endl;
   }
 
@@ -193,7 +235,7 @@ struct DMA : public sc_module
 };
 
 // DMA module definition for MM2MM
-struct DMA_MM2MM : public sc_module
+class DMA_MM2MM : public sc_core::sc_module
 {
   // stream interconnect
   sc_signal<float, SC_MANY_WRITERS> stream;
