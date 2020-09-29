@@ -203,6 +203,8 @@ public:
 
 		this->mem = new unsigned char[descriptor_size_word_align];
     std::cout << "DMA Module: " << name << " has been instantiated " << std::endl;
+
+    socket.register_b_transport(this, &DMA::b_transport);
   }
 
  DMA(sc_module_name name, DmaDirection _direction, const sc_signal<bool> &_reset, const sc_signal<bool> &_enable, float *_ram, sc_signal<float, SC_MANY_WRITERS> &_stream) : sc_module(name)

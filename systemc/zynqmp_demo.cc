@@ -580,8 +580,12 @@ SC_MODULE(Top)
                 tlm2apb_tmr->pwdata(apbsig_timer_pwdata);
                 tlm2apb_tmr->prdata(apbsig_timer_prdata);
                 tlm2apb_tmr->pready(apbsig_timer_pready);
-		mem.processor = new processor_tb("processor_tb", mem.mem, &mmr.mmr.enable_tb); 
-		mem.processor->clk(*clk);
+		mem.processor_test_bench= new processor_tb("processor_tb", mem.mem, &mmr.mmr.enable_tb); 
+		mem.processor_test_bench->clk(*clk);
+
+    //add a dma to virtual bus
+    bus->memmap(0xa0a00000ULL, mem.processor_test_bench->processor->left.dma_mm2s.descriptor_size_word_align,
+                ADDRMODE_RELATIVE, -1, mem.processor_test_bench->processor->left.dma_mm2s.socket);
 		zynq.tie_off();
 	}
 
