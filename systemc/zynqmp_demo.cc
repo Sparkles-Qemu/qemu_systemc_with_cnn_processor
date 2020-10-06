@@ -64,7 +64,7 @@ using namespace std;
 
 #define NR_DEMODMA      4
 #define NR_MASTERS	1 + NR_DEMODMA
-#define NR_DEVICES	6 + NR_DEMODMA + 1
+#define NR_DEVICES	6 + NR_DEMODMA + 1 
 
 SC_MODULE(Top)
 {
@@ -580,8 +580,8 @@ SC_MODULE(Top)
                 tlm2apb_tmr->pwdata(apbsig_timer_pwdata);
                 tlm2apb_tmr->prdata(apbsig_timer_prdata);
                 tlm2apb_tmr->pready(apbsig_timer_pready);
-		mem.processor = new processor_tb("processor_tb", mem.mem, &mmr.mmr.enable_tb); 
-		mem.processor->clk(*clk);
+		mem.processor_test_bench = new processor_tb("processor_tb", mem.mem, &mmr.mmr.enable_tb); 
+		mem.processor_test_bench->clk(*clk);
 		zynq.tie_off();
 	}
 

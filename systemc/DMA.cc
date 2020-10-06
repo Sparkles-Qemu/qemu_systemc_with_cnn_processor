@@ -6,6 +6,8 @@
 #include "vector"
 #include <string>
 #include <iostream>
+#include "tlm_utils/simple_target_socket.h"
+
 
 //-----------------------------------------------------
 // Design Name : DMA
@@ -54,7 +56,6 @@ struct DMA : public sc_module
   DmaDirection direction;
   unsigned int current_ram_index;
   unsigned int x_count_remaining;
-
   const Descriptor default_descriptor = {0, 0, DmaState::SUSPENDED, 0, 0};
 
   // Prints descriptor list, useful for debugging
@@ -141,7 +142,7 @@ struct DMA : public sc_module
   }
 
   // Constructor
-  DMA(sc_module_name name, DmaDirection _direction, const sc_signal<bool> &_clk, const sc_signal<bool> &_reset, const sc_signal<bool> &_enable, float *_ram, sc_signal<float, SC_MANY_WRITERS> &_stream) : sc_module(name)
+ DMA(sc_module_name name, DmaDirection _direction, const sc_signal<bool> &_clk, const sc_signal<bool> &_reset, const sc_signal<bool> &_enable, float *_ram, sc_signal<float, SC_MANY_WRITERS> &_stream) : sc_module(name) 
   {
     // std::cout << "DMA Module: " << name << " attempting to instantiate " << std::endl;
 
@@ -160,7 +161,7 @@ struct DMA : public sc_module
     std::cout << "DMA Module: " << name << " has been instantiated " << std::endl;
   }
 
- DMA(sc_module_name name, DmaDirection _direction, const sc_signal<bool> &_reset, const sc_signal<bool> &_enable, float *_ram, sc_signal<float, SC_MANY_WRITERS> &_stream) : sc_module(name)
+DMA(sc_module_name name, DmaDirection _direction, const sc_signal<bool> &_reset, const sc_signal<bool> &_enable, float *_ram, sc_signal<float, SC_MANY_WRITERS> &_stream) : sc_module(name) 
   {
     // std::cout << "DMA Module: " << name << " attempting to instantiate " << std::endl;
 
