@@ -95,6 +95,7 @@ SC_OBJS += xilinx-axidma.o
 SC_OBJS += DMA.o
 SC_OBJS += processor_tb.o
 SC_OBJS += regs.o
+SC_OBJS += dma_socket_wrapper.o
 
 LIBSOC_PATH=libsystemctlm-soc
 CPPFLAGS += -I $(LIBSOC_PATH)
@@ -169,7 +170,7 @@ SYSCAN_ZYNQ_DEMO = zynq_demo.cc
 SYSCAN_ZYNQMP_DEMO = zynqmp_demo.cc
 SYSCAN_ZYNQMP_LMAC2_DEMO = zynqmp_lmac2_demo.cc
 SC_OBJS += regs.o
-SYSCAN_SCFILES += demo-dma.cc debugdev.cc remote-port-tlm.cc DMA.cc processor_tb.cc regs.cc
+SYSCAN_SCFILES += demo-dma.cc debugdev.cc remote-port-tlm.cc DMA.cc processor_tb.cc regs.cc dma_socket_wrapper.cc
 VCS_CFILES += remote-port-proto.c remote-port-sk.c safeio.c
 
 SYSCAN_FLAGS += -tlm2 -sysc=opt_if
