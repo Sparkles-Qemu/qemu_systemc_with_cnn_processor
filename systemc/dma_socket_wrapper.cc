@@ -36,22 +36,42 @@ void dma_socket_wrapper::b_transport(tlm::tlm_generic_payload& trans, sc_time& d
 	unsigned char*   ptr = trans.get_data_ptr();
 	unsigned int     len = trans.get_data_length();
 	unsigned char*   byt = trans.get_byte_enable_ptr();
+	Descriptor *temp_descriptor;
 
 	if (addr > sc_dt::uint64(size)) {
 		trans.set_response_status(tlm::TLM_ADDRESS_ERROR_RESPONSE);
-		SC_REPORT_FATAL("Memory", "Unsupported access\n");
+		SC_REPORT_FATAL("DMA_WRAPPER", "Unsupported access\n");
 		return;
 	}
 	if (byt != 0) {
 		trans.set_response_status(tlm::TLM_BYTE_ENABLE_ERROR_RESPONSE);
-		SC_REPORT_FATAL("Memory", "Unsupported access\n");
+		SC_REPORT_FATAL("DMA_WRAPPER", "Unsupported access\n");
 		return;
 	}
 
 	if (trans.get_command() == tlm::TLM_READ_COMMAND){
+		
+			memcpy(ptr, &data_buffer[addr], len);
   
   }
 	else if (cmd == tlm::TLM_WRITE_COMMAND){
+
+		memcpy(&data_buffer[addr], ptr, len);
+
+		if( addr == size - len){
+			
+			//This is the last write. Reinterpret cast to Descriptor type
+			temp_descriptor = reinterpret_cast<Descriptor *>(data_buffer);
+
+			if(dma_ptr != NULL){
+				//TODO: call load program function 
+				//TODO: Call print descriptor function
+			}else{
+				
+				cout<< "dma_ptr is NULL" << endl;
+			}
+
+		}
 
   }
 
