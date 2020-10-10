@@ -7,8 +7,9 @@
 
 //my includes
 
-#define SYSTEMC_DEVICE_ADDR (0xa0800000)
-#define SYSTEMC_DEVICE_MMR_ADDR (0xa1000000ULL)
+#define SYSTEMC_DEVICE_ADDR       (0xa0800000ULL)
+#define SYSTEMC_DEVICE_MMR_ADDR   (0xa1000000ULL)
+#define SYSTEMC_DMA_ADDR          (0xa0900000ULL)
 #define IMAGE_WIDTH 10
 #define IMAGE_HEIGHT 10
 #define IMAGE_SIZE IMAGE_WIDTH *IMAGE_HEIGHT
@@ -56,7 +57,7 @@ int main(int argc, char *argv[])
 		printf("Error mmappin base_ptr_mmr\n");
 	}
 
-
+  //TODO: Send first dma descriptor
 	for(i = 0; i < BIG_RAM_SIZE; i++) {
 		src[i] = i + 1;
 	}

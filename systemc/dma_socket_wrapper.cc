@@ -12,8 +12,6 @@ dma_socket_wrapper::dma_socket_wrapper(sc_module_name name, int _size) : sc_modu
 
 {
 
-
-
   socket.register_b_transport(this, &dma_socket_wrapper::b_transport);
   socket.register_get_direct_mem_ptr(this, &dma_socket_wrapper::get_direct_mem_ptr); 
 
@@ -21,13 +19,12 @@ dma_socket_wrapper::dma_socket_wrapper(sc_module_name name, int _size) : sc_modu
   size = _size;
   data_buffer = new uint8_t[size]; // This buffer will be used to store descriptor from user-app
   memset(&data_buffer[0], 0, size);
-
+  descriptor_count = 0;
 
 }
 
 
 
-//TODO: in b_transport, I need to check if dma_ptr == NULL
 
 void dma_socket_wrapper::b_transport(tlm::tlm_generic_payload& trans, sc_time& delay)
 {
@@ -49,6 +46,8 @@ void dma_socket_wrapper::b_transport(tlm::tlm_generic_payload& trans, sc_time& d
 		return;
 	}
 
+  cout << "Made it to dma_socket_wrapper" << endl;
+
 	if (trans.get_command() == tlm::TLM_READ_COMMAND){
 		
 			memcpy(ptr, &data_buffer[addr], len);
@@ -58,22 +57,27 @@ void dma_socket_wrapper::b_transport(tlm::tlm_generic_payload& trans, sc_time& d
 
 		memcpy(&data_buffer[addr], ptr, len);
 
-		if( addr == size - len){
+  }
+
+  
+   //We have a full descriptor 
+	if( addr == size - len){
 			
 			//This is the last write. Reinterpret cast to Descriptor type
-			temp_descriptor = reinterpret_cast<Descriptor *>(data_buffer);
+      temp_descriptor = reinterpret_cast<Descriptor *>(data_buffer);
+      descriptor_count++;
 
-			if(dma_ptr != NULL){
-				//TODO: call load program function 
-				//TODO: Call print descriptor function
-			}else{
+        
+    	if(dma_ptr != NULL){
+        dma_ptr->load_descriptor((*temp_descriptor));
+        dma_ptr->print_descriptors();
+
+      }else{
 				
-				cout<< "dma_ptr is NULL" << endl;
+				   cout<< "dma_ptr is NULL" << endl;
 			}
 
-		}
-
-  }
+	}
 
 	delay += LATENCY;
 

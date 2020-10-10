@@ -56,6 +56,7 @@ struct DMA : public sc_module
   DmaDirection direction;
   unsigned int current_ram_index;
   unsigned int x_count_remaining;
+  unsigned int descriptor_count = 0;
   const Descriptor default_descriptor = {0, 0, DmaState::SUSPENDED, 0, 0};
 
   // Prints descriptor list, useful for debugging
@@ -84,6 +85,18 @@ struct DMA : public sc_module
     current_ram_index = descriptors[execute_index].start;
     x_count_remaining = descriptors[execute_index].x_count;
   }
+
+  void load_descriptor(Descriptor newDescriptor){ 
+    descriptors.push_back(newDescriptor);
+    descriptor_count++;
+
+    if(descriptor_count == 1){
+       execute_index = 0;
+       current_ram_index = descriptors[execute_index].start;
+       x_count_remaining = descriptors[execute_index].x_count;
+    }
+  }
+
 
   // Called on rising edge of clk or high level reset
   void update()

@@ -7,7 +7,7 @@
 
 //my includes
 
-#define SYSTEMC_DEVICE_ADDR (0xa0a00000ULL)
+#define SYSTEMC_DEVICE_ADDR (0xa0900000ULL)
 
 #define SUSPENDED 0
 #define TRANSFER  1

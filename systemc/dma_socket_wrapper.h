@@ -6,6 +6,7 @@ class dma_socket_wrapper
   public:
   tlm_utils::simple_target_socket<dma_socket_wrapper> socket;
   DMA *dma_ptr = NULL;
+  uint8_t descriptor_count;
   const sc_time LATENCY;
 
   dma_socket_wrapper(sc_core::sc_module_name name, int _size);
