@@ -9,7 +9,7 @@
 
 #define SYSTEMC_DEVICE_ADDR       (0xa0800000ULL)
 #define SYSTEMC_DEVICE_MMR_ADDR   (0xa1000000ULL)
-#define SYSTEMC_DMA_ADDR          (0xa0900000ULL)
+#define SYSTEMC_DMA_ADDR          (0xa8000000ULL)
 #define IMAGE_WIDTH 10
 #define IMAGE_HEIGHT 10
 #define IMAGE_SIZE IMAGE_WIDTH *IMAGE_HEIGHT
@@ -20,7 +20,7 @@
 int main(int argc, char *argv[])
 {
 	int fd, i;
-	unsigned char *base_ptr, *base_ptr_mmr;
+	unsigned char *base_ptr, *base_ptr_mmr, *base_dma_ptr;
 	unsigned val;
 	unsigned addr, page_addr, page_offset;
 	unsigned page_size=sysconf(_SC_PAGESIZE);
@@ -57,6 +57,10 @@ int main(int argc, char *argv[])
 		printf("Error mmappin base_ptr_mmr\n");
 	}
 
+	base_dma_ptr = (unsigned char *) mmap(NULL,page_size,PROT_READ|PROT_WRITE,MAP_SHARED,fd,(SYSTEMC_DMA_ADDR & ~(page_size-1)));
+
+
+  memcpy(base_dma_ptr, src, sizeof(src));
   //TODO: Send first dma descriptor
 	for(i = 0; i < BIG_RAM_SIZE; i++) {
 		src[i] = i + 1;

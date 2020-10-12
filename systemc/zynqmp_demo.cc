@@ -202,7 +202,7 @@ SC_MODULE(Top)
 		zynq("zynq", sk_descr),
 		mem("mem", sc_time(1, SC_NS), 64 * 1024),
 		mmr("mmrs"),
-    test_dma1("Dma_test1", sizeof(Descriptor)),
+    test_dma1("Dma_test1", 64 * 1024),
 		rst("rst"),
 		rst_n("rst_n"),
 #ifdef HAVE_VERILOG
@@ -348,6 +348,9 @@ SC_MODULE(Top)
 		bus->memmap(0xa0800000ULL, 64 * 1024 - 1,
 				ADDRMODE_RELATIVE, -1, mem.socket);
 
+		bus->memmap(0xa8000000ULL, 64 * 1024 - 1,                                                                  
+           ADDRMODE_RELATIVE, -1, test_dma1.socket);
+ 
 		bus->memmap(0x0LL, 0xffffffff - 1,
 				ADDRMODE_RELATIVE, -1, *(zynq.s_axi_hpc_fpd[0]));
 
@@ -585,8 +588,7 @@ SC_MODULE(Top)
                 tlm2apb_tmr->pready(apbsig_timer_pready);
 		mem.processor_test_bench = new processor_tb("processor_tb", mem.mem, &mmr.mmr.enable_tb); 
 		mem.processor_test_bench->clk(*clk);
-    test_dma1.dma_ptr = (&mem.processor_test_bench->processor->left.dma_mm2s);
-    bus->memmap(0xa0900000ULL, sizeof(Descriptor) -1, ADDRMODE_RELATIVE, -1, test_dma1.socket); 
+    //test_dma1.dma_ptr = (&mem.processor_test_bench->processor->left.dma_mm2s);
 
 		zynq.tie_off();
 	}

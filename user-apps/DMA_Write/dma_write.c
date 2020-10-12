@@ -32,12 +32,13 @@ struct Descriptor
 int main(int argc, char *argv[])
 {
 	int fd;
-	unsigned char  *base_ptr;
+	unsigned char  *base_ptr, *dma_ptr, char_test[4] = {0, 1, 2, 3};
 	unsigned addr, page_addr, page_offset;
 	unsigned page_size=sysconf(_SC_PAGESIZE);
 
   //Test descriptor
   struct  Descriptor desc_mm2s = {0, 0, TRANSFER, BIG_RAM_SIZE, 1};
+  dma_ptr = (unsigned char*)(&desc_mm2s);
 
 	//open virtual file to write to absolute address
 	fd=open("/dev/mem",O_RDWR);
@@ -51,9 +52,14 @@ int main(int argc, char *argv[])
 	page_addr=(SYSTEMC_DEVICE_ADDR & ~(page_size-1));
 	page_offset=SYSTEMC_DEVICE_ADDR - page_addr;
 	base_ptr = (unsigned char *)mmap(NULL,page_size,PROT_READ|PROT_WRITE,MAP_SHARED,fd,(SYSTEMC_DEVICE_ADDR & ~(page_size-1)));
+  
 
+  if(base_ptr == NULL){
+
+    printf("Error mapping base_ptr\n");
+  }
 
 	// Write data
-	memcpy(base_ptr, (unsigned char*)(&desc_mm2s),  sizeof(struct Descriptor));
+	memcpy(base_ptr, char_test,  sizeof(char_test));
 	return 0; 
 }
