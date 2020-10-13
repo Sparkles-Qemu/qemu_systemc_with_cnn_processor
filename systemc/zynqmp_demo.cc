@@ -588,7 +588,7 @@ SC_MODULE(Top)
                 tlm2apb_tmr->pready(apbsig_timer_pready);
 		mem.processor_test_bench = new processor_tb("processor_tb", mem.mem, &mmr.mmr.enable_tb); 
 		mem.processor_test_bench->clk(*clk);
-    //test_dma1.dma_ptr = (&mem.processor_test_bench->processor->left.dma_mm2s);
+    test_dma1.dma_ptr = (&mem.processor_test_bench->processor->left.dma_mm2s);
 
 		zynq.tie_off();
 	}

@@ -28,9 +28,10 @@
 #include "tlm_utils/simple_initiator_socket.h"
 #include "tlm_utils/simple_target_socket.h"
 #include "tlm_utils/tlm_quantumkeeper.h"
-
+#define USER_SPACE_DESCRIPTOR_SIZE 20 // in bytes
 using namespace sc_core;
 using namespace std;
+
 
 #include "dma_socket_wrapper.h"
 
@@ -58,8 +59,7 @@ void dma_socket_wrapper::b_transport(tlm::tlm_generic_payload& trans, sc_time& d
 	unsigned char*   ptr = trans.get_data_ptr();
 	unsigned int     len = trans.get_data_length();
 	unsigned char*   byt = trans.get_byte_enable_ptr();
-	int  index;
-	int user_data;
+  Descriptor *temp_descriptor;
 
 	if (addr > sc_dt::uint64(size)) {
 		trans.set_response_status(tlm::TLM_ADDRESS_ERROR_RESPONSE);
@@ -74,17 +74,27 @@ void dma_socket_wrapper::b_transport(tlm::tlm_generic_payload& trans, sc_time& d
 
 
 	cout << "Address = " << addr << endl;
-	
-	//since our mem array is of type float now, we have to devide addr by  4
-	index = addr / 4;
-	user_data = *(reinterpret_cast<int *>(ptr));
+  cout << "Length = " << len << endl;
+  cout << "Size of descriptor = " << sizeof(Descriptor) << endl;	
 
-	cout << "data = " << user_data << endl;
-	
 	if (trans.get_command() == tlm::TLM_READ_COMMAND)
-		memcpy(ptr, &data_buf[index], len);
+		memcpy(ptr, &data_buf[addr], len);
 	else if (cmd == tlm::TLM_WRITE_COMMAND)
-		data_buf[index] = user_data;
+		memcpy(&data_buf[addr], ptr, len);
+
+
+  if(addr + len == USER_SPACE_DESCRIPTOR_SIZE) {
+      cout << " Recieved a full descriptor" << endl;
+
+      temp_descriptor = reinterpret_cast<Descriptor *>(data_buf);
+      if(dma_ptr != NULL){
+          dma_ptr->load_descriptor((*temp_descriptor));
+          dma_ptr->print_descriptors();
+
+      }else{
+          cout<< "dma_ptr is NULL" << endl;
+      }
+  }
 
 	delay += LATENCY;
 

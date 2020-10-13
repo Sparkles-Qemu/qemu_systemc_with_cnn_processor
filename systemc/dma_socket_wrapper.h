@@ -26,12 +26,16 @@
 #define IMAGE_SIZE IMAGE_WIDTH *IMAGE_HEIGHT
 #define SMALL_RAM_SIZE IMAGE_SIZE
 #define BIG_RAM_SIZE 3 * IMAGE_SIZE
+
+#include "DMA.cc"
+
 class dma_socket_wrapper
 : public sc_core::sc_module
 {
 public:
 	tlm_utils::simple_target_socket<dma_socket_wrapper> socket;
-
+	DMA *dma_ptr = NULL;
+  uint8_t descriptor_count;
 	const sc_time LATENCY;
 	int identifier;
 
