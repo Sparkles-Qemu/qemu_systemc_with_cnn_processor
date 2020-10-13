@@ -7,7 +7,7 @@
 
 //my includes
 
-#define SYSTEMC_DEVICE_ADDR (0xa0900000ULL)
+#define SYSTEMC_DEVICE_ADDR (0xa8000000ULL)
 
 #define SUSPENDED 0
 #define TRANSFER  1
@@ -32,13 +32,15 @@ struct Descriptor
 int main(int argc, char *argv[])
 {
 	int fd;
-	unsigned char  *base_ptr, *dma_ptr, char_test[4] = {0, 1, 2, 3};
+	unsigned char  *base_ptr, *descriptor_ptr, char_test[4] = {0, 1, 2, 3};
 	unsigned addr, page_addr, page_offset;
 	unsigned page_size=sysconf(_SC_PAGESIZE);
 
   //Test descriptor
-  struct  Descriptor desc_mm2s = {0, 0, TRANSFER, BIG_RAM_SIZE, 1};
-  dma_ptr = (unsigned char*)(&desc_mm2s);
+  struct  Descriptor desc_mm2s = {0, 0, TRANSFER, BIG_RAM_SIZE + 100, 2};
+  descriptor_ptr = (unsigned char*)(&desc_mm2s);
+
+  printf("Size of Descriptor = %d\n", sizeof(desc_mm2s));
 
 	//open virtual file to write to absolute address
 	fd=open("/dev/mem",O_RDWR);
@@ -60,6 +62,6 @@ int main(int argc, char *argv[])
   }
 
 	// Write data
-	memcpy(base_ptr, char_test,  sizeof(char_test));
+	memcpy(base_ptr, (&desc_mm2s),  sizeof(desc_mm2s));
 	return 0; 
 }
