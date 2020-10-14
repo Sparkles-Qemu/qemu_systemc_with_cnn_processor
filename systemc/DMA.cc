@@ -87,13 +87,18 @@ struct DMA : public sc_module
   }
 
   void load_descriptor(Descriptor newDescriptor){ 
+
+    if(descriptor_count == 0){
+      descriptors.clear(); //clears default descriptor
+    }
     descriptors.push_back(newDescriptor);
     descriptor_count++;
-
+    
+    //First descriptor
     if(descriptor_count == 1){
-       execute_index = 0;
-       current_ram_index = descriptors[execute_index].start;
-       x_count_remaining = descriptors[execute_index].x_count;
+      execute_index = 0;
+      current_ram_index = descriptors[execute_index].start;
+      x_count_remaining = descriptors[execute_index].x_count;
     }
   }
 
@@ -104,13 +109,13 @@ struct DMA : public sc_module
     if (reset.read())
     {
       // assume at least one descriptor is in dma at all times
-      execute_index = 0;
+      /*execute_index = 0;
       descriptors.clear();
       descriptors.push_back(default_descriptor);
       current_ram_index = descriptors[execute_index].start;
       x_count_remaining = descriptors[execute_index].x_count;
       descriptors[execute_index].state = DmaState::SUSPENDED; // slightly cheating here, but does what we want
-      std::cout << "@ " << sc_time_stamp() << " " << this->name() << ": Module has been reset" << std::endl;
+      std::cout << "@ " << sc_time_stamp() << " " << this->name() << ": Module has been reset" << std::endl;i*/
     }
     else if (enable.read() && (descriptors[execute_index].state != DmaState::SUSPENDED))
     {

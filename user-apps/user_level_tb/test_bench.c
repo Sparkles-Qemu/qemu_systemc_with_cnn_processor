@@ -16,6 +16,19 @@
 #define SMALL_RAM_SIZE IMAGE_SIZE
 #define BIG_RAM_SIZE 3 * IMAGE_SIZE
 
+#define SUSPENDED 0
+#define TRANSFER  1
+#define TRANSFER_WITH_FORWARD 2
+#define WAIT 3
+
+struct Descriptor
+{
+  unsigned int next;     // index of next descriptor
+  unsigned int start;    // start index in ram array
+  unsigned int state;    // state of dma
+  unsigned int x_count;  // number of floats to transfer/wait
+  unsigned int x_modify; // number of floats between each transfer/wait
+};
 
 int main(int argc, char *argv[])
 {
@@ -60,8 +73,13 @@ int main(int argc, char *argv[])
 	base_dma_ptr = (unsigned char *) mmap(NULL,page_size,PROT_READ|PROT_WRITE,MAP_SHARED,fd,(SYSTEMC_DMA_ADDR & ~(page_size-1)));
 
 
-  memcpy(base_dma_ptr, src, sizeof(src));
   //TODO: Send first dma descriptor
+	// Descriptor for source ram
+ struct Descriptor desc_mm2s = {0, 0, TRANSFER, BIG_RAM_SIZE, 1};
+
+	memcpy(base_dma_ptr, (&desc_mm2s),  sizeof(desc_mm2s));
+
+
 	for(i = 0; i < BIG_RAM_SIZE; i++) {
 		src[i] = i + 1;
 	}
