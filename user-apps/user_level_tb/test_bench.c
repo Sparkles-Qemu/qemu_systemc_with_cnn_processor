@@ -91,6 +91,8 @@ int main(int argc, char *argv[])
 	// Enable test bench  
 	memcpy(base_ptr_mmr + 8, &enable_tb,  sizeof(enable_tb));
 
+
+  //TODO:  implement polling 
   usleep(100); // 10 miliseconds
 
   // Retrieve data bac
