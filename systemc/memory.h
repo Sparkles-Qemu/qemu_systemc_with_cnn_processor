@@ -45,7 +45,7 @@ public:
 
 	void accelerate();
 
-	processor_tb *processor_test_bench;
+	processor_tb *processor;
 	float	*mem;	
 
 	sc_event processor_start;

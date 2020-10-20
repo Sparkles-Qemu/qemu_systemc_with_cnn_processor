@@ -1,5 +1,4 @@
 /*
-  oeset             (_reset);
  * Top level of the ZynqMP cosim example.
  *
  * Copyright (c) 2014 Xilinx Inc.
@@ -46,7 +45,6 @@ using namespace std;
 #include "debugdev.h"
 #include "demo-dma.h"
 #include "regs.h"
-#include "dma_socket_wrapper.h"
 #include "xilinx-zynqmp.h"
 
 #include "checkers/pc-axilite.h"
@@ -66,7 +64,7 @@ using namespace std;
 
 #define NR_DEMODMA      4
 #define NR_MASTERS	1 + NR_DEMODMA
-#define NR_DEVICES	6 + NR_DEMODMA + 1 + 1
+#define NR_DEVICES	6 + NR_DEMODMA + 1
 
 SC_MODULE(Top)
 {
@@ -76,7 +74,6 @@ SC_MODULE(Top)
 	memory mem;
 	regs mmr;
 	debugdev *debug;
-  dma_socket_wrapper test_dma1;
 	demodma *dma[NR_DEMODMA];
 
 	sc_signal<bool> rst, rst_n;
@@ -203,7 +200,6 @@ SC_MODULE(Top)
 		zynq("zynq", sk_descr),
 		mem("mem", sc_time(1, SC_NS), 64 * 1024),
 		mmr("mmrs"),
-    test_dma1("Dma_test1", 64 * 1024),
 		rst("rst"),
 		rst_n("rst_n"),
 #ifdef HAVE_VERILOG
@@ -349,9 +345,6 @@ SC_MODULE(Top)
 		bus->memmap(0xa0800000ULL, 64 * 1024 - 1,
 				ADDRMODE_RELATIVE, -1, mem.socket);
 
-		bus->memmap(0xa8000000ULL, 64 * 1024 - 1,                                                                  
-           ADDRMODE_RELATIVE, -1, test_dma1.socket);
- 
 		bus->memmap(0x0LL, 0xffffffff - 1,
 				ADDRMODE_RELATIVE, -1, *(zynq.s_axi_hpc_fpd[0]));
 
@@ -587,10 +580,8 @@ SC_MODULE(Top)
                 tlm2apb_tmr->pwdata(apbsig_timer_pwdata);
                 tlm2apb_tmr->prdata(apbsig_timer_prdata);
                 tlm2apb_tmr->pready(apbsig_timer_pready);
-		mem.processor_test_bench = new processor_tb("processor_tb", mem.mem, &mmr.mmr.enable_tb);
-		mem.processor_test_bench->clk(*clk);
-    test_dma1.dma_ptr = (&mem.processor_test_bench->processor->left.dma_mm2s);
-
+		mem.processor = new processor_tb("processor_tb", mem.mem, &mmr.mmr.enable_tb); 
+		mem.processor->clk(*clk);
 		zynq.tie_off();
 	}
 

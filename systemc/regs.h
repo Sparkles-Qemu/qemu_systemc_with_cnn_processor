@@ -3,8 +3,7 @@ class regs
 {
 public:
 
-  tlm_utils::simple_target_socket<regs> socket;
-        
+        tlm_utils::simple_target_socket<regs> socket;
 	
 	//singal to enable and reset processor 
 	sc_signal<bool> reset;

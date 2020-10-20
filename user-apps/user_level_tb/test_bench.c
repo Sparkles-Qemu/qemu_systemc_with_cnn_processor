@@ -7,33 +7,19 @@
 
 //my includes
 
-#define SYSTEMC_DEVICE_ADDR       (0xa0800000ULL)
-#define SYSTEMC_DEVICE_MMR_ADDR   (0xa1000000ULL)
-#define SYSTEMC_DMA_ADDR          (0xa8000000ULL)
+#define SYSTEMC_DEVICE_ADDR (0xa0800000)
+#define SYSTEMC_DEVICE_MMR_ADDR (0xa1000000ULL)
 #define IMAGE_WIDTH 10
 #define IMAGE_HEIGHT 10
 #define IMAGE_SIZE IMAGE_WIDTH *IMAGE_HEIGHT
 #define SMALL_RAM_SIZE IMAGE_SIZE
 #define BIG_RAM_SIZE 3 * IMAGE_SIZE
 
-#define SUSPENDED 0
-#define TRANSFER  1
-#define TRANSFER_WITH_FORWARD 2
-#define WAIT 3
-
-struct Descriptor
-{
-  unsigned int next;     // index of next descriptor
-  unsigned int start;    // start index in ram array
-  unsigned int state;    // state of dma
-  unsigned int x_count;  // number of floats to transfer/wait
-  unsigned int x_modify; // number of floats between each transfer/wait
-};
 
 int main(int argc, char *argv[])
 {
 	int fd, i;
-	unsigned char *base_ptr, *base_ptr_mmr, *base_dma_ptr;
+	unsigned char *base_ptr, *base_ptr_mmr;
 	unsigned val;
 	unsigned addr, page_addr, page_offset;
 	unsigned page_size=sysconf(_SC_PAGESIZE);
@@ -70,15 +56,6 @@ int main(int argc, char *argv[])
 		printf("Error mmappin base_ptr_mmr\n");
 	}
 
-	base_dma_ptr = (unsigned char *) mmap(NULL,page_size,PROT_READ|PROT_WRITE,MAP_SHARED,fd,(SYSTEMC_DMA_ADDR & ~(page_size-1)));
-
-
-  //TODO: Send first dma descriptor
-	// Descriptor for source ram
- struct Descriptor desc_mm2s = {0, 0, TRANSFER, BIG_RAM_SIZE, 1};
-
-	memcpy(base_dma_ptr, (&desc_mm2s),  sizeof(desc_mm2s));
-
 
 	for(i = 0; i < BIG_RAM_SIZE; i++) {
 		src[i] = i + 1;
@@ -91,8 +68,6 @@ int main(int argc, char *argv[])
 	// Enable test bench  
 	memcpy(base_ptr_mmr + 8, &enable_tb,  sizeof(enable_tb));
 
-
-  //TODO:  implement polling 
   usleep(100); // 10 miliseconds
 
   // Retrieve data bac

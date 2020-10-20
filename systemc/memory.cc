@@ -67,7 +67,7 @@ void memory::accelerate()
 
 		//processor->compute(reset, enable);
 		//maa->test_bench();
-		processor_test_bench->done = 0;
+		processor->done = 0;
 	}
 
 }

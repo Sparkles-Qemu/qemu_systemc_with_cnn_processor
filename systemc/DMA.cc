@@ -6,8 +6,6 @@
 #include "vector"
 #include <string>
 #include <iostream>
-#include "tlm_utils/simple_target_socket.h"
-
 
 //-----------------------------------------------------
 // Design Name : DMA
@@ -56,7 +54,7 @@ struct DMA : public sc_module
   DmaDirection direction;
   unsigned int current_ram_index;
   unsigned int x_count_remaining;
-  unsigned int descriptor_count = 0;
+
   const Descriptor default_descriptor = {0, 0, DmaState::SUSPENDED, 0, 0};
 
   // Prints descriptor list, useful for debugging
@@ -86,36 +84,19 @@ struct DMA : public sc_module
     x_count_remaining = descriptors[execute_index].x_count;
   }
 
-  void load_descriptor(Descriptor newDescriptor){ 
-
-    if(descriptor_count == 0){
-      descriptors.clear(); //clears default descriptor
-    }
-    descriptors.push_back(newDescriptor);
-    descriptor_count++;
-    
-    //First descriptor
-    if(descriptor_count == 1){
-      execute_index = 0;
-      current_ram_index = descriptors[execute_index].start;
-      x_count_remaining = descriptors[execute_index].x_count;
-    }
-  }
-
-
   // Called on rising edge of clk or high level reset
   void update()
   {
     if (reset.read())
     {
       // assume at least one descriptor is in dma at all times
-      /*execute_index = 0;
+      execute_index = 0;
       descriptors.clear();
       descriptors.push_back(default_descriptor);
       current_ram_index = descriptors[execute_index].start;
       x_count_remaining = descriptors[execute_index].x_count;
       descriptors[execute_index].state = DmaState::SUSPENDED; // slightly cheating here, but does what we want
-      std::cout << "@ " << sc_time_stamp() << " " << this->name() << ": Module has been reset" << std::endl;i*/
+      std::cout << "@ " << sc_time_stamp() << " " << this->name() << ": Module has been reset" << std::endl;
     }
     else if (enable.read() && (descriptors[execute_index].state != DmaState::SUSPENDED))
     {
@@ -160,7 +141,7 @@ struct DMA : public sc_module
   }
 
   // Constructor
- DMA(sc_module_name name, DmaDirection _direction, const sc_signal<bool> &_clk, const sc_signal<bool> &_reset, const sc_signal<bool> &_enable, float *_ram, sc_signal<float, SC_MANY_WRITERS> &_stream) : sc_module(name) 
+  DMA(sc_module_name name, DmaDirection _direction, const sc_signal<bool> &_clk, const sc_signal<bool> &_reset, const sc_signal<bool> &_enable, float *_ram, sc_signal<float, SC_MANY_WRITERS> &_stream) : sc_module(name)
   {
     // std::cout << "DMA Module: " << name << " attempting to instantiate " << std::endl;
 
@@ -179,7 +160,7 @@ struct DMA : public sc_module
     std::cout << "DMA Module: " << name << " has been instantiated " << std::endl;
   }
 
-DMA(sc_module_name name, DmaDirection _direction, const sc_signal<bool> &_reset, const sc_signal<bool> &_enable, float *_ram, sc_signal<float, SC_MANY_WRITERS> &_stream) : sc_module(name) 
+ DMA(sc_module_name name, DmaDirection _direction, const sc_signal<bool> &_reset, const sc_signal<bool> &_enable, float *_ram, sc_signal<float, SC_MANY_WRITERS> &_stream) : sc_module(name)
   {
     // std::cout << "DMA Module: " << name << " attempting to instantiate " << std::endl;
 

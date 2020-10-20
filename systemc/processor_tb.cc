@@ -27,13 +27,13 @@ void processor_tb::test_bench()
 
 	cout  << " Data inside Processor module" << endl;  
 
-  for(int i = 0; i < BIG_RAM_SIZE; i++) {
+/*   for(int i = 0; i < BIG_RAM_SIZE; i++) {
 
 	cout<< processor->ramSource[i] << endl;
-}
+}*/
 
   // descriptors for source ram
- // Descriptor desc_mm2s = {0, 0, DmaState::TRANSFER, BIG_RAM_SIZE, 1};
+  Descriptor desc_mm2s = {0, 0, DmaState::TRANSFER, BIG_RAM_SIZE, 1};
 
   // descriptors for destination ram 1
   Descriptor desc_s2mm1_wait_before = {1, 0, DmaState::WAIT, 1, 1};
@@ -96,20 +96,20 @@ void processor_tb::test_bench()
   // File to trace down signals  
   // Start simulation 
   enable = 0;
-  //reset = 1;
+  reset = 1;
   
   //sc_start(0, SC_NS);
   //wait();
   wait();
 
-  //reset = 0;
+  reset = 0;
 
  // sc_start(1, SC_NS);
   //wait();
   wait();
 
     // load descriptors
-  //processor->left.dma_mm2s.loadProgram({desc_mm2s});
+  processor->left.dma_mm2s.loadProgram({desc_mm2s});
   processor->left.dma_s2mm1.loadProgram({desc_s2mm1_wait_before, desc_s2mm1_transfer, desc_s2mm1_sus_after});
   processor->left.dma_s2mm2.loadProgram({desc_s2mm2_wait_before, desc_s2mm2_transfer, desc_s2mm2_sus_after});
   processor->left.dma_s2mm3.loadProgram({desc_s2mm3_wait_before, desc_s2mm3_transfer, desc_s2mm3_sus_after});
