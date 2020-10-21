@@ -33,65 +33,65 @@ void processor_tb::test_bench()
 }
 
   // descriptors for source ram
- // Descriptor desc_mm2s = {0, 0, DmaState::TRANSFER, BIG_RAM_SIZE, 1};
+ // Descriptor desc_mm2s = {0, 0, TRANSFER, BIG_RAM_SIZE, 1};
 
   // descriptors for destination ram 1
-  Descriptor desc_s2mm1_wait_before = {1, 0, DmaState::WAIT, 1, 1};
-  Descriptor desc_s2mm1_transfer = {2, 0, DmaState::TRANSFER, SMALL_RAM_SIZE, 1}; 
-  Descriptor desc_s2mm1_sus_after = {0, 0, DmaState::SUSPENDED, 0, 1};
+  Descriptor desc_s2mm1_wait_before = {1, 0, WAIT, 1, 1};
+  Descriptor desc_s2mm1_transfer = {2, 0, TRANSFER, SMALL_RAM_SIZE, 1}; 
+  Descriptor desc_s2mm1_sus_after = {0, 0, SUSPENDED, 0, 1};
 
   // descriptors for destination ram 2
-  Descriptor desc_s2mm2_wait_before = {1, 0, DmaState::WAIT, 1 + SMALL_RAM_SIZE, 1};
-  Descriptor desc_s2mm2_transfer = {2, 0, DmaState::TRANSFER, SMALL_RAM_SIZE, 1}; 
-  Descriptor desc_s2mm2_sus_after = {0, 0, DmaState::SUSPENDED, 0, 1};
+  Descriptor desc_s2mm2_wait_before = {1, 0, WAIT, 1 + SMALL_RAM_SIZE, 1};
+  Descriptor desc_s2mm2_transfer = {2, 0, TRANSFER, SMALL_RAM_SIZE, 1}; 
+  Descriptor desc_s2mm2_sus_after = {0, 0, SUSPENDED, 0, 1};
 
   // descriptors for destination ram 3
-  Descriptor desc_s2mm3_wait_before = {1, 0, DmaState::WAIT, 1 + 2 * SMALL_RAM_SIZE, 1};
-  Descriptor desc_s2mm3_transfer = {2, 0, DmaState::TRANSFER, SMALL_RAM_SIZE, 1}; 
-  Descriptor desc_s2mm3_sus_after = {0, 0, DmaState::SUSPENDED, 0, 1};
+  Descriptor desc_s2mm3_wait_before = {1, 0, WAIT, 1 + 2 * SMALL_RAM_SIZE, 1};
+  Descriptor desc_s2mm3_transfer = {2, 0, TRANSFER, SMALL_RAM_SIZE, 1}; 
+  Descriptor desc_s2mm3_sus_after = {0, 0, SUSPENDED, 0, 1};
 
   //branch0 descriptors
-  Descriptor desc_branch0_group0_timed_wait = {1, 0, DmaState::WAIT, BIG_RAM_SIZE, 1}; // 2
-  Descriptor desc_branch0_group0_transfer = {2, 0, DmaState::TRANSFER, IMAGE_SIZE, 1};
-  Descriptor desc_branch0_group0_suspend = {2, 0, DmaState::SUSPENDED, 0, 1};
+  Descriptor desc_branch0_group0_timed_wait = {1, 0, WAIT, BIG_RAM_SIZE, 1}; // 2
+  Descriptor desc_branch0_group0_transfer = {2, 0, TRANSFER, IMAGE_SIZE, 1};
+  Descriptor desc_branch0_group0_suspend = {2, 0, SUSPENDED, 0, 1};
 
-  Descriptor desc_branch0_group1_timed_wait = {1, 0, DmaState::WAIT, BIG_RAM_SIZE + 3, 1}; // 2
-  Descriptor desc_branch0_group1_transfer = {2, 10, DmaState::TRANSFER, IMAGE_SIZE, 1};
-  Descriptor desc_branch0_group1_suspend = {2, 0, DmaState::SUSPENDED, 0, 1};
+  Descriptor desc_branch0_group1_timed_wait = {1, 0, WAIT, BIG_RAM_SIZE + 3, 1}; // 2
+  Descriptor desc_branch0_group1_transfer = {2, 10, TRANSFER, IMAGE_SIZE, 1};
+  Descriptor desc_branch0_group1_suspend = {2, 0, SUSPENDED, 0, 1};
 
-  Descriptor desc_branch0_group2_timed_wait = {1, 0, DmaState::WAIT, BIG_RAM_SIZE + 6, 1}; // 4
-  Descriptor desc_branch0_group2_transfer = {2, 20, DmaState::TRANSFER, IMAGE_SIZE, 1};
-  Descriptor desc_branch0_group2_suspend = {2, 0, DmaState::SUSPENDED, 0, 1};
+  Descriptor desc_branch0_group2_timed_wait = {1, 0, WAIT, BIG_RAM_SIZE + 6, 1}; // 4
+  Descriptor desc_branch0_group2_transfer = {2, 20, TRANSFER, IMAGE_SIZE, 1};
+  Descriptor desc_branch0_group2_suspend = {2, 0, SUSPENDED, 0, 1};
 
   //branch1 descriptors
-  Descriptor desc_branch1_group0_timed_wait = {1, 0, DmaState::WAIT, BIG_RAM_SIZE + 9, 1}; // 8
-  Descriptor desc_branch1_group0_transfer = {2, 0, DmaState::TRANSFER, IMAGE_SIZE, 1};
-  Descriptor desc_branch1_group0_suspend = {2, 0, DmaState::SUSPENDED, 0, 1};
+  Descriptor desc_branch1_group0_timed_wait = {1, 0, WAIT, BIG_RAM_SIZE + 9, 1}; // 8
+  Descriptor desc_branch1_group0_transfer = {2, 0, TRANSFER, IMAGE_SIZE, 1};
+  Descriptor desc_branch1_group0_suspend = {2, 0, SUSPENDED, 0, 1};
 
 
-  Descriptor desc_branch1_group1_timed_wait = {1, 0, DmaState::WAIT, BIG_RAM_SIZE + 12, 1};
-  Descriptor desc_branch1_group1_transfer = {2, 10, DmaState::TRANSFER, IMAGE_SIZE, 1};
-  Descriptor desc_branch1_group1_suspend = {2, 0, DmaState::SUSPENDED, 0, 1};
+  Descriptor desc_branch1_group1_timed_wait = {1, 0, WAIT, BIG_RAM_SIZE + 12, 1};
+  Descriptor desc_branch1_group1_transfer = {2, 10, TRANSFER, IMAGE_SIZE, 1};
+  Descriptor desc_branch1_group1_suspend = {2, 0, SUSPENDED, 0, 1};
 
 
-  Descriptor desc_branch1_group2_timed_wait = {1, 0, DmaState::WAIT, BIG_RAM_SIZE + 15, 1};
-  Descriptor desc_branch1_group2_transfer = {2, 20, DmaState::TRANSFER, IMAGE_SIZE, 1};
-  Descriptor desc_branch1_group2_suspend = {2, 0, DmaState::SUSPENDED, 0, 1};
+  Descriptor desc_branch1_group2_timed_wait = {1, 0, WAIT, BIG_RAM_SIZE + 15, 1};
+  Descriptor desc_branch1_group2_transfer = {2, 20, TRANSFER, IMAGE_SIZE, 1};
+  Descriptor desc_branch1_group2_suspend = {2, 0, SUSPENDED, 0, 1};
 
   //branch2 descriptors
-  Descriptor desc_branch2_group0_timed_wait = {1, 0, DmaState::WAIT, BIG_RAM_SIZE + 18, 1};
-  Descriptor desc_branch2_group0_transfer = {2, 0, DmaState::TRANSFER, IMAGE_SIZE, 1};
-  Descriptor desc_branch2_group0_suspend = {2, 0, DmaState::SUSPENDED, 0, 1};
+  Descriptor desc_branch2_group0_timed_wait = {1, 0, WAIT, BIG_RAM_SIZE + 18, 1};
+  Descriptor desc_branch2_group0_transfer = {2, 0, TRANSFER, IMAGE_SIZE, 1};
+  Descriptor desc_branch2_group0_suspend = {2, 0, SUSPENDED, 0, 1};
 
 
-  Descriptor desc_branch2_group1_timed_wait = {1, 0, DmaState::WAIT, BIG_RAM_SIZE + 21, 1};
-  Descriptor desc_branch2_group1_transfer = {2, 10, DmaState::TRANSFER, IMAGE_SIZE, 1};
-  Descriptor desc_branch2_group1_suspend = {2, 0, DmaState::SUSPENDED, 0, 1};
+  Descriptor desc_branch2_group1_timed_wait = {1, 0, WAIT, BIG_RAM_SIZE + 21, 1};
+  Descriptor desc_branch2_group1_transfer = {2, 10, TRANSFER, IMAGE_SIZE, 1};
+  Descriptor desc_branch2_group1_suspend = {2, 0, SUSPENDED, 0, 1};
 
 
-  Descriptor desc_branch2_group2_timed_wait = {1, 0, DmaState::WAIT, BIG_RAM_SIZE + 24, 1};
-  Descriptor desc_branch2_group2_transfer = {2, 20, DmaState::TRANSFER, IMAGE_SIZE, 1};
-  Descriptor desc_branch2_group2_suspend = {2, 0, DmaState::SUSPENDED, 0, 1};
+  Descriptor desc_branch2_group2_timed_wait = {1, 0, WAIT, BIG_RAM_SIZE + 24, 1};
+  Descriptor desc_branch2_group2_transfer = {2, 20, TRANSFER, IMAGE_SIZE, 1};
+  Descriptor desc_branch2_group2_suspend = {2, 0, SUSPENDED, 0, 1};
 
   // File to trace down signals  
   // Start simulation 

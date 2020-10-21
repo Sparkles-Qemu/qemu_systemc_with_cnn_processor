@@ -22,21 +22,26 @@ enum class DmaDirection
   S2MM
 };
 
-enum class DmaState
+/*enum class DmaState
 {
   SUSPENDED, // do nothing indefinitely
   TRANSFER,  // transfer data
   TRANSFER_WITH_FORWARD,
   WAIT       // do nothing for certain number of cycles
-};
+};*/
+
+#define SUSPENDED             (0)
+#define TRANSFER              (1)
+#define TRANSFER_WITH_FORWARD (2)
+#define WAIT                  (3)
 
 struct Descriptor
 {
-  unsigned int next;     // index of next descriptor
-  unsigned int start;    // start index in ram array
-  DmaState state;        // state of dma
-  unsigned int x_count;  // number of floats to transfer/wait
-  unsigned int x_modify; // number of floats between each transfer/wait
+  uint32_t next;     // index of next descriptor
+  uint32_t start;    // start index in ram array
+  uint32_t state;    // state of dma
+  uint32_t x_count;  // number of floats to transfer/wait
+  uint32_t x_modify; // number of floats between each transfer/wait
 };
 
 // DMA module definition for MM2S and S2MM
@@ -57,7 +62,7 @@ struct DMA : public sc_module
   unsigned int current_ram_index;
   unsigned int x_count_remaining;
   unsigned int descriptor_count = 0;
-  const Descriptor default_descriptor = {0, 0, DmaState::SUSPENDED, 0, 0};
+  const Descriptor default_descriptor = {0, 0, SUSPENDED, 0, 0};
 
   // Prints descriptor list, useful for debugging
   void print_descriptors()
@@ -109,17 +114,17 @@ struct DMA : public sc_module
     if (reset.read())
     {
       // assume at least one descriptor is in dma at all times
-      /*execute_index = 0;
+      execute_index = 0;
       descriptors.clear();
       descriptors.push_back(default_descriptor);
       current_ram_index = descriptors[execute_index].start;
       x_count_remaining = descriptors[execute_index].x_count;
-      descriptors[execute_index].state = DmaState::SUSPENDED; // slightly cheating here, but does what we want
-      std::cout << "@ " << sc_time_stamp() << " " << this->name() << ": Module has been reset" << std::endl;i*/
+      descriptors[execute_index].state = SUSPENDED; // slightly cheating here, but does what we want
+      std::cout << "@ " << sc_time_stamp() << " " << this->name() << ": Module has been reset" << std::endl;
     }
-    else if (enable.read() && (descriptors[execute_index].state != DmaState::SUSPENDED))
+    else if (enable.read() && (descriptors[execute_index].state != SUSPENDED))
     {
-      if (descriptors[execute_index].state == DmaState::TRANSFER)
+      if (descriptors[execute_index].state == TRANSFER)
       {
         if (direction == DmaDirection::MM2S) // Memory to Stream
         {
