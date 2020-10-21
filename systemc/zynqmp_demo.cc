@@ -203,7 +203,7 @@ SC_MODULE(Top)
 		zynq("zynq", sk_descr),
 		mem("mem", sc_time(1, SC_NS), 64 * 1024),
 		mmr("mmrs"),
-    test_dma1("Dma_test1", 64 * 1024),
+    test_dma1("Dma_test1", sizeof(Descriptor)),
 		rst("rst"),
 		rst_n("rst_n"),
 #ifdef HAVE_VERILOG
@@ -349,7 +349,7 @@ SC_MODULE(Top)
 		bus->memmap(0xa0800000ULL, 64 * 1024 - 1,
 				ADDRMODE_RELATIVE, -1, mem.socket);
 
-		bus->memmap(0xa8000000ULL, 64 * 1024 - 1,                                                                  
+		bus->memmap(0xa8000000ULL, sizeof(Descriptor) - 1,                                                                  
            ADDRMODE_RELATIVE, -1, test_dma1.socket);
  
 		bus->memmap(0x0LL, 0xffffffff - 1,

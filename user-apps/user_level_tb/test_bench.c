@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <sys/mman.h>
 #include <fcntl.h>
+#include <stdint.h>
 
 //my includes
 
@@ -23,11 +24,11 @@
 
 struct Descriptor
 {
-  unsigned int next;     // index of next descriptor
-  unsigned int start;    // start index in ram array
-  unsigned int state;    // state of dma
-  unsigned int x_count;  // number of floats to transfer/wait
-  unsigned int x_modify; // number of floats between each transfer/wait
+  uint32_t next;     // index of next descriptor
+  uint32_t start;    // start index in ram array
+  uint32_t state;    // state of dma
+  uint32_t x_count;  // number of floats to transfer/wait
+  uint32_t x_modify; // number of floats between each transfer/wait
 };
 
 int main(int argc, char *argv[])
