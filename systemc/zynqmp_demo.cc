@@ -64,7 +64,8 @@ using namespace std;
 #include "verilated.h"
 #endif
 
-#define NR_DEMODMA      4
+#define DMA_SOCKET_WRAPPERS 1
+#define NR_DEMODMA  4
 #define NR_MASTERS	1 + NR_DEMODMA
 #define NR_DEVICES	6 + NR_DEMODMA + 1 + 1
 
@@ -76,7 +77,7 @@ SC_MODULE(Top)
 	memory mem;
 	regs mmr;
 	debugdev *debug;
-  dma_socket_wrapper test_dma1;
+  dma_socket_wrapper *test_dma1[DMA_SOCKET_WRAPPERS];
 	demodma *dma[NR_DEMODMA];
 
 	sc_signal<bool> rst, rst_n;
@@ -203,7 +204,6 @@ SC_MODULE(Top)
 		zynq("zynq", sk_descr),
 		mem("mem", sc_time(1, SC_NS), 64 * 1024),
 		mmr("mmrs"),
-    test_dma1("Dma_test1", sizeof(Descriptor)),
 		rst("rst"),
 		rst_n("rst_n"),
 #ifdef HAVE_VERILOG
@@ -308,6 +308,7 @@ SC_MODULE(Top)
 
 		bus   = new iconnect<NR_MASTERS, NR_DEVICES> ("bus");
 		debug = new debugdev("debug");
+ 
 
 		for (i = 0; i < (sizeof dma / sizeof dma[0]); i++) {
 			char name[16];
@@ -315,6 +316,14 @@ SC_MODULE(Top)
 			snprintf(name, sizeof name, "demodma%d", i);
 			dma[i] = new demodma(name);
 		}
+
+
+    for(i = 0; i < DMA_SOCKET_WRAPPERS; i++){
+      char wrapper_name[16];
+
+      snprintf(wrapper_name, sizeof wrapper_name, "wrapper%d", i);
+      test_dma1[i] = new dma_socket_wrapper(wrapper_name, sizeof( Descriptor));
+    }
 
 		bus->memmap(0xa0000000ULL, 0x100 - 1,
 				ADDRMODE_RELATIVE, -1, debug->socket);
@@ -350,7 +359,7 @@ SC_MODULE(Top)
 				ADDRMODE_RELATIVE, -1, mem.socket);
 
 		bus->memmap(0xa8000000ULL, sizeof(Descriptor) - 1,                                                                  
-           ADDRMODE_RELATIVE, -1, test_dma1.socket);
+           ADDRMODE_RELATIVE, -1, test_dma1[0]->socket);
  
 		bus->memmap(0x0LL, 0xffffffff - 1,
 				ADDRMODE_RELATIVE, -1, *(zynq.s_axi_hpc_fpd[0]));
@@ -589,7 +598,7 @@ SC_MODULE(Top)
                 tlm2apb_tmr->pready(apbsig_timer_pready);
 		mem.processor_test_bench = new processor_tb("processor_tb", mem.mem, &mmr.mmr.enable_tb);
 		mem.processor_test_bench->clk(*clk);
-    test_dma1.dma_ptr = (&mem.processor_test_bench->processor->left.dma_mm2s);
+    test_dma1[0]->dma_ptr = (&mem.processor_test_bench->processor->left.dma_mm2s);
 
 		zynq.tie_off();
 	}
