@@ -1,13 +1,11 @@
 #include "processor_tb.h"
 
 
-processor_tb::processor_tb(sc_module_name name, float *_ramSource,  uint32_t *_done)
-		: sc_module(name), ramSource(_ramSource), done(_done)
+processor_tb::processor_tb(sc_module_name name, uint32_t *_done)
+		: sc_module(name), done(_done)
 
 {
 
-	processor = new Processor("processor", ramSource, reset, enable);
-	processor->clk		(clk);
 	*(done) = 1;
 
 	SC_THREAD(test_bench);
@@ -95,12 +93,12 @@ void processor_tb::test_bench()
 
   // File to trace down signals  
   // Start simulation 
-  enable = 0;
+  mmr->enable = 0;
   //reset = 1;
   
   //sc_start(0, SC_NS);
   //wait();
-  wait();
+  //wait();
 
   //reset = 0;
 
@@ -145,7 +143,7 @@ void processor_tb::test_bench()
   wait();
   //sc_start(0.5, SC_NS);
 
-  enable = 1;
+  mmr->enable = 1;
   
   std::cout << "@" << sc_time_stamp() << " Transfer Start " << std::endl;
   

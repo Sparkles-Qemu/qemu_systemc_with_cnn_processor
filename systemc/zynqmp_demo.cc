@@ -596,7 +596,10 @@ SC_MODULE(Top)
                 tlm2apb_tmr->pwdata(apbsig_timer_pwdata);
                 tlm2apb_tmr->prdata(apbsig_timer_prdata);
                 tlm2apb_tmr->pready(apbsig_timer_pready);
-		mem.processor_test_bench = new processor_tb("processor_tb", mem.mem, &mmr.mmr.enable_tb);
+		mem.processor_test_bench = new processor_tb("processor_tb", &mmr.mmr.enable_tb);
+    mem.processor_test_bench->mmr = (&mmr);
+    mem.processor_test_bench->processor = new Processor("Processor", mem.mem, mmr.reset, mmr.enable);
+    mem.processor_test_bench->processor->clk(*clk);
 		mem.processor_test_bench->clk(*clk);
     test_dma1[0]->dma_ptr = (&mem.processor_test_bench->processor->left.dma_mm2s);
 

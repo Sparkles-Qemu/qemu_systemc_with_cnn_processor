@@ -119,6 +119,7 @@ struct DMA : public sc_module
       descriptors.push_back(default_descriptor);
       current_ram_index = descriptors[execute_index].start;
       x_count_remaining = descriptors[execute_index].x_count;
+      descriptor_count = 0;
       descriptors[execute_index].state = SUSPENDED; // slightly cheating here, but does what we want
       std::cout << "@ " << sc_time_stamp() << " " << this->name() << ": Module has been reset" << std::endl;
     }

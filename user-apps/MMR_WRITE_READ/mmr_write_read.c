@@ -36,7 +36,10 @@ int main(int argc, char *argv[])
 
 
 	// Write data
-	enable_tb = 0;
+  enable_tb = 0;
 	memcpy(base_ptr + 8, &enable_tb,  sizeof(enable_tb));
+//
+// enable_tb = 0;
+// memcpy(base_ptr, &enable_tb,  sizeof(enable_tb));
 	return 0; 
 }

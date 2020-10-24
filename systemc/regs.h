@@ -1,3 +1,8 @@
+#ifndef REGS
+#define REGS
+
+
+
 class regs
 : public sc_core::sc_module
 {
@@ -23,3 +28,5 @@ public:
                 uint32_t u32[4];
         }mmr;
 };
+
+#endif

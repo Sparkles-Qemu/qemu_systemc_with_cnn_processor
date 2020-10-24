@@ -40,8 +40,9 @@ int main(int argc, char *argv[])
 	unsigned page_size=sysconf(_SC_PAGESIZE);
 	int src[BIG_RAM_SIZE] = {0};
   float dst[64] = {0};
-	int enable_tb, error;
+	int enable_tb, enable_modules, reset_modules, error;
 	int *memory_ptr;
+ struct Descriptor desc_mm2s = {0, 0, TRANSFER, BIG_RAM_SIZE, 1};
 
 
   float expected_output[64] = {15678, 15813, 15948, 16083, 16218, 16353, 16488, 16623, 17028, 17163, 17298    , 17433, 17568, 17703, 17838, 17973, 18378, 18513, 18648, 18783, 18918, 19053, 19188, 19323, 19728, 19863, 19998, 20133, 20268, 20403, 20538, 20673, 21078, 21213, 21348, 21483, 21618, 21753, 21888, 22023, 22428, 22563, 22698, 22833, 22968, 23103, 23238, 23373, 23778, 23913, 24048, 24183, 24318, 24453, 24588, 24723, 25128, 25263, 25398, 25533, 25668, 25803, 25938, 26073};
@@ -74,28 +75,48 @@ int main(int argc, char *argv[])
 	base_dma_ptr = (unsigned char *) mmap(NULL,page_size,PROT_READ|PROT_WRITE,MAP_SHARED,fd,(SYSTEMC_DMA_ADDR & ~(page_size-1)));
 
 
-  //TODO: Send first dma descriptor
-	// Descriptor for source ram
- struct Descriptor desc_mm2s = {0, 0, TRANSFER, BIG_RAM_SIZE, 1};
 
-	memcpy(base_dma_ptr, (&desc_mm2s),  sizeof(desc_mm2s));
-
-
+  // Fill array with data
 	for(i = 0; i < BIG_RAM_SIZE; i++) {
 		src[i] = i + 1;
 	}
 
 	// Write data
 	memcpy(base_ptr, src, sizeof(src));
-	enable_tb = 0;
 
-	// Enable test bench  
-	memcpy(base_ptr_mmr + 8, &enable_tb,  sizeof(enable_tb));
 
-  usleep(100); // 10 miliseconds
+  //reset modules
+  reset_modules = 1;
+  memcpy(base_ptr_mmr + 4, &reset_modules, sizeof(reset_modules));
+
+  reset_modules = 0;                                                                                           
+  memcpy(base_ptr_mmr + 4, &reset_modules, sizeof(reset_modules));
+
+
+	// Send descriptor for source ram
+	memcpy(base_dma_ptr, (&desc_mm2s),  sizeof(desc_mm2s));
+
+
+  // Enable modules 
+  /*enable_modules = 0;
+  memcpy(base_ptr_mmr, &enable_modules, sizeof(enable_modules));
+  enable_modules = 1;
+  memcpy(base_ptr_mmr, &enable_modules, sizeof(enable_modules));*/
+
+  usleep(500); //  miliseconds
+  
+	// Enable test bench 
+	enable_tb = 0; // 0 enables the test bench
+  memcpy(base_ptr_mmr + 8, &enable_tb,  sizeof(enable_tb));
+
+  usleep(500); // miliseconds
 
   // Retrieve data bac
   memcpy(dst, base_ptr + 1220, sizeof(dst));
+
+  // Disable modules                                  
+//  enable_modules = 0;                                                                                          
+  //memcpy(base_ptr_mmr, &enable_modules, sizeof(enable_modules));
 
 
   //print data 
