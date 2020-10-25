@@ -64,10 +64,10 @@ using namespace std;
 #include "verilated.h"
 #endif
 
-#define DMA_SOCKET_WRAPPERS 1
+#define DMA_SOCKET_WRAPPERS 2
 #define NR_DEMODMA  4
 #define NR_MASTERS	1 + NR_DEMODMA
-#define NR_DEVICES	6 + NR_DEMODMA + 1 + 1
+#define NR_DEVICES	6 + NR_DEMODMA + 1 + DMA_SOCKET_WRAPPERS
 
 SC_MODULE(Top)
 {
@@ -358,8 +358,9 @@ SC_MODULE(Top)
 		bus->memmap(0xa0800000ULL, 64 * 1024 - 1,
 				ADDRMODE_RELATIVE, -1, mem.socket);
 
-		bus->memmap(0xa8000000ULL, sizeof(Descriptor) - 1,                                                                  
-           ADDRMODE_RELATIVE, -1, test_dma1[0]->socket);
+    for(i = 0; i < DMA_SOCKET_WRAPPERS; i++){
+		  bus->memmap(0xa8000000ULL + sizeof(Descriptor) * i, sizeof(Descriptor) - 1, ADDRMODE_RELATIVE, -1, test_dma1[i]->socket);
+    }
  
 		bus->memmap(0x0LL, 0xffffffff - 1,
 				ADDRMODE_RELATIVE, -1, *(zynq.s_axi_hpc_fpd[0]));
@@ -601,7 +602,10 @@ SC_MODULE(Top)
     mem.processor_test_bench->processor = new Processor("Processor", mem.mem, mmr.reset, mmr.enable);
     mem.processor_test_bench->processor->clk(*clk);
 		mem.processor_test_bench->clk(*clk);
+
+    //Manual connection of dma
     test_dma1[0]->dma_ptr = (&mem.processor_test_bench->processor->left.dma_mm2s);
+    test_dma1[1]->dma_ptr = (&mem.processor_test_bench->processor->left.dma_s2mm1);
 
 		zynq.tie_off();
 	}

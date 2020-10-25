@@ -22,6 +22,8 @@
 #define TRANSFER_WITH_FORWARD 2
 #define WAIT 3
 
+#define RAM1_DESCRIPTORS	  3
+
 struct Descriptor
 {
   uint32_t next;     // index of next descriptor
@@ -42,7 +44,18 @@ int main(int argc, char *argv[])
   float dst[64] = {0};
 	int enable_tb, enable_modules, reset_modules, error;
 	int *memory_ptr;
- struct Descriptor desc_mm2s = {0, 0, TRANSFER, BIG_RAM_SIZE, 1};
+
+  // Descriptor for source ram
+  struct Descriptor desc_mm2s = {0, 0, TRANSFER, BIG_RAM_SIZE, 1};
+
+  // Destination ram 1 descriptors
+	struct Descriptor ram1_descriptors[RAM1_DESCRIPTORS] = {
+  
+                                                                {1, 0, WAIT, 1, 1},
+                                                                {2, 0, TRANSFER, SMALL_RAM_SIZE, 1},
+                                                                {0, 0, SUSPENDED, 0, 1}};
+  
+
 
 
   float expected_output[64] = {15678, 15813, 15948, 16083, 16218, 16353, 16488, 16623, 17028, 17163, 17298    , 17433, 17568, 17703, 17838, 17973, 18378, 18513, 18648, 18783, 18918, 19053, 19188, 19323, 19728, 19863, 19998, 20133, 20268, 20403, 20538, 20673, 21078, 21213, 21348, 21483, 21618, 21753, 21888, 22023, 22428, 22563, 22698, 22833, 22968, 23103, 23238, 23373, 23778, 23913, 24048, 24183, 24318, 24453, 24588, 24723, 25128, 25263, 25398, 25533, 25668, 25803, 25938, 26073};
@@ -95,6 +108,15 @@ int main(int argc, char *argv[])
 
 	// Send descriptor for source ram
 	memcpy(base_dma_ptr, (&desc_mm2s),  sizeof(desc_mm2s));
+
+
+
+  // Send Ram1 descriptors
+  for(int i = 0; i < RAM1_DESCRIPTORS; i++){
+
+    memcpy(base_dma_ptr + sizeof(struct Descriptor), (&ram1_descriptors[i]), sizeof(struct Descriptor));
+
+  }
 
 
   // Enable modules 
