@@ -22,8 +22,6 @@
 #define TRANSFER_WITH_FORWARD 2
 #define WAIT 3
 
-#define RAM1_DESCRIPTORS	  3
-
 struct Descriptor
 {
   uint32_t next;     // index of next descriptor
@@ -32,6 +30,11 @@ struct Descriptor
   uint32_t x_count;  // number of floats to transfer/wait
   uint32_t x_modify; // number of floats between each transfer/wait
 };
+
+#define DESCRIPTOR_SZ     sizeof( struct Descriptor)
+#define RAM1_DESCRIPTORS	  3
+#define RAM2_DESCRIPTORS	  3
+
 
 int main(int argc, char *argv[])
 {
@@ -42,7 +45,7 @@ int main(int argc, char *argv[])
 	unsigned page_size=sysconf(_SC_PAGESIZE);
 	int src[BIG_RAM_SIZE] = {0};
   float dst[64] = {0};
-	int enable_tb, enable_modules, reset_modules, error;
+	int enable_tb, enable_modules, reset_modules, error, base_dma_ptr_offset = 0;
 	int *memory_ptr;
 
   // Descriptor for source ram
@@ -54,7 +57,12 @@ int main(int argc, char *argv[])
                                                                 {1, 0, WAIT, 1, 1},
                                                                 {2, 0, TRANSFER, SMALL_RAM_SIZE, 1},
                                                                 {0, 0, SUSPENDED, 0, 1}};
-  
+  // Destination ram2 descriptors
+	struct Descriptor ram2_descriptors[RAM2_DESCRIPTORS] = {
+      
+                                                                {1, 0, WAIT, 1 + SMALL_RAM_SIZE, 1},
+                                                                {2, 0, TRANSFER, SMALL_RAM_SIZE, 1},
+                                                                {0, 0, SUSPENDED, 0, 1}};
 
 
 
@@ -107,14 +115,26 @@ int main(int argc, char *argv[])
 
 
 	// Send descriptor for source ram
-	memcpy(base_dma_ptr, (&desc_mm2s),  sizeof(desc_mm2s));
+  
+  base_dma_ptr_offset = 0;
+	memcpy(base_dma_ptr + base_dma_ptr_offset, (&desc_mm2s), DESCRIPTOR_SZ); 
 
 
 
   // Send Ram1 descriptors
+  base_dma_ptr_offset = DESCRIPTOR_SZ;
   for(int i = 0; i < RAM1_DESCRIPTORS; i++){
 
-    memcpy(base_dma_ptr + sizeof(struct Descriptor), (&ram1_descriptors[i]), sizeof(struct Descriptor));
+    memcpy(base_dma_ptr + base_dma_ptr_offset, (&ram1_descriptors[i]), DESCRIPTOR_SZ); 
+
+  }
+
+
+  // Send Ram2 descriptors
+  base_dma_ptr_offset = DESCRIPTOR_SZ * 2;
+  for(int i = 0; i < RAM2_DESCRIPTORS; i++){
+
+    memcpy(base_dma_ptr + base_dma_ptr_offset, (&ram2_descriptors[i]), DESCRIPTOR_SZ); 
 
   }
 

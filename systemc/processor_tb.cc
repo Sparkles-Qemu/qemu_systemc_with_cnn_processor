@@ -39,9 +39,9 @@ void processor_tb::test_bench()
   Descriptor desc_s2mm1_sus_after = {0, 0, SUSPENDED, 0, 1};*/
 
   // descriptors for destination ram 2
-  Descriptor desc_s2mm2_wait_before = {1, 0, WAIT, 1 + SMALL_RAM_SIZE, 1};
-  Descriptor desc_s2mm2_transfer = {2, 0, TRANSFER, SMALL_RAM_SIZE, 1}; 
-  Descriptor desc_s2mm2_sus_after = {0, 0, SUSPENDED, 0, 1};
+  //Descriptor desc_s2mm2_wait_before = {1, 0, WAIT, 1 + SMALL_RAM_SIZE, 1};
+  //Descriptor desc_s2mm2_transfer = {2, 0, TRANSFER, SMALL_RAM_SIZE, 1}; 
+ // Descriptor desc_s2mm2_sus_after = {0, 0, SUSPENDED, 0, 1};
 
   // descriptors for destination ram 3
   Descriptor desc_s2mm3_wait_before = {1, 0, WAIT, 1 + 2 * SMALL_RAM_SIZE, 1};
@@ -109,7 +109,7 @@ void processor_tb::test_bench()
     // load descriptors
   //processor->left.dma_mm2s.loadProgram({desc_mm2s});
  /* processor->left.dma_s2mm1.loadProgram({desc_s2mm1_wait_before, desc_s2mm1_transfer, desc_s2mm1_sus_after});*/
-  processor->left.dma_s2mm2.loadProgram({desc_s2mm2_wait_before, desc_s2mm2_transfer, desc_s2mm2_sus_after});
+  //processor->left.dma_s2mm2.loadProgram({desc_s2mm2_wait_before, desc_s2mm2_transfer, desc_s2mm2_sus_after});
   processor->left.dma_s2mm3.loadProgram({desc_s2mm3_wait_before, desc_s2mm3_transfer, desc_s2mm3_sus_after});
   
   processor->right.branch0.group0.dma_mm2s.loadProgram({desc_branch0_group0_timed_wait, desc_branch0_group0_transfer, desc_branch0_group0_suspend});
