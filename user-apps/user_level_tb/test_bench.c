@@ -39,6 +39,7 @@ struct Descriptor
 #define BRANCH0_GROUP1_DESCRIPTORS  3
 #define BRANCH0_GROUP2_DESCRIPTORS  3
 #define BRANCH1_GROUP0_DESCRIPTORS  3
+#define BRANCH1_GROUP1_DESCRIPTORS  3
 
 
 int main(int argc, char *argv[])
@@ -97,6 +98,12 @@ int main(int argc, char *argv[])
                                                                   
                                                                 {1, 0, WAIT, BIG_RAM_SIZE + 9, 1},
                                                                 {2, 0, TRANSFER, IMAGE_SIZE, 1},
+                                                                {2, 0, SUSPENDED, 0, 1}};
+
+	struct Descriptor branch1_group1_descriptors[BRANCH1_GROUP1_DESCRIPTORS] = {
+                                                                  
+                                                                {1, 0, WAIT, BIG_RAM_SIZE + 12, 1},
+                                                                {2, 10, TRANSFER, IMAGE_SIZE, 1},
                                                                 {2, 0, SUSPENDED, 0, 1}};
 
     float expected_output[64] = {15678, 15813, 15948, 16083, 16218, 16353, 16488, 16623, 17028, 17163, 17298    , 17433, 17568, 17703, 17838, 17973, 18378, 18513, 18648, 18783, 18918, 19053, 19188, 19323, 19728, 19863, 19998, 20133, 20268, 20403, 20538, 20673, 21078, 21213, 21348, 21483, 21618, 21753, 21888, 22023, 22428, 22563, 22698, 22833, 22968, 23103, 23238, 23373, 23778, 23913, 24048, 24183, 24318, 24453, 24588, 24723, 25128, 25263, 25398, 25533, 25668, 25803, 25938, 26073};
@@ -203,13 +210,22 @@ int main(int argc, char *argv[])
 
   }
   
-  // Send branch0_group2 descriptors
+  // Send branch1_group0 descriptors
   base_dma_ptr_offset = DESCRIPTOR_SZ * 7;
   for(i = 0; i < BRANCH1_GROUP0_DESCRIPTORS; i++){
 
     memcpy(base_dma_ptr + base_dma_ptr_offset, (&branch1_group0_descriptors[i]), DESCRIPTOR_SZ); 
 
   }
+  
+  // Send branch1_group1 descriptors
+  base_dma_ptr_offset = DESCRIPTOR_SZ * 8;
+  for(i = 0; i < BRANCH1_GROUP1_DESCRIPTORS; i++){
+
+    memcpy(base_dma_ptr + base_dma_ptr_offset, (&branch1_group1_descriptors[i]), DESCRIPTOR_SZ); 
+
+  }
+
   // Enable modules 
   /*enable_modules = 0;
   memcpy(base_ptr_mmr, &enable_modules, sizeof(enable_modules));

@@ -64,7 +64,7 @@ using namespace std;
 #include "verilated.h"
 #endif
 
-#define DMA_SOCKET_WRAPPERS 8
+#define DMA_SOCKET_WRAPPERS 9
 #define NR_DEMODMA  4
 #define NR_MASTERS	1 + NR_DEMODMA
 #define NR_DEVICES	6 + NR_DEMODMA + 1 + DMA_SOCKET_WRAPPERS
@@ -612,6 +612,7 @@ SC_MODULE(Top)
     test_dma1[5]->dma_ptr = (&mem.processor_test_bench->processor->right.branch0.group1.dma_mm2s);
     test_dma1[6]->dma_ptr = (&mem.processor_test_bench->processor->right.branch0.group2.dma_mm2s);
     test_dma1[7]->dma_ptr = (&mem.processor_test_bench->processor->right.branch1.group0.dma_mm2s);
+    test_dma1[8]->dma_ptr = (&mem.processor_test_bench->processor->right.branch1.group1.dma_mm2s);
 
 		zynq.tie_off();
 	}
