@@ -13,6 +13,8 @@ all: $(TARGET)
 
 upload: $(TARGET)
 	scp -P 2222 $^  $(QEMU_NAME)@$(QEMU_IP):/home/root
+ssh-reset:
+	ssh-keygen -f "/home/peta/.ssh/known_hosts" -R [localhost]:2222
 clean:
 		rm -rf *.o $(TARGET)
 
