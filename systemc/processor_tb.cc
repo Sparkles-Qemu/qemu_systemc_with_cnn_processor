@@ -49,9 +49,9 @@ void processor_tb::test_bench()
   //Descriptor desc_s2mm3_sus_after = {0, 0, SUSPENDED, 0, 1};
 
   //branch0 descriptors
-  Descriptor desc_branch0_group0_timed_wait = {1, 0, WAIT, BIG_RAM_SIZE, 1}; // 2
-  Descriptor desc_branch0_group0_transfer = {2, 0, TRANSFER, IMAGE_SIZE, 1};
-  Descriptor desc_branch0_group0_suspend = {2, 0, SUSPENDED, 0, 1};
+  //Descriptor desc_branch0_group0_timed_wait = {1, 0, WAIT, BIG_RAM_SIZE, 1}; // 2
+  //Descriptor desc_branch0_group0_transfer = {2, 0, TRANSFER, IMAGE_SIZE, 1};
+  //Descriptor desc_branch0_group0_suspend = {2, 0, SUSPENDED, 0, 1};
 
   Descriptor desc_branch0_group1_timed_wait = {1, 0, WAIT, BIG_RAM_SIZE + 3, 1}; // 2
   Descriptor desc_branch0_group1_transfer = {2, 10, TRANSFER, IMAGE_SIZE, 1};
@@ -112,7 +112,7 @@ void processor_tb::test_bench()
   //processor->left.dma_s2mm2.loadProgram({desc_s2mm2_wait_before, desc_s2mm2_transfer, desc_s2mm2_sus_after});
   //processor->left.dma_s2mm3.loadProgram({desc_s2mm3_wait_before, desc_s2mm3_transfer, desc_s2mm3_sus_after});
   
-  processor->right.branch0.group0.dma_mm2s.loadProgram({desc_branch0_group0_timed_wait, desc_branch0_group0_transfer, desc_branch0_group0_suspend});
+  //processor->right.branch0.group0.dma_mm2s.loadProgram({desc_branch0_group0_timed_wait, desc_branch0_group0_transfer, desc_branch0_group0_suspend});
   processor->right.branch0.group1.dma_mm2s.loadProgram({desc_branch0_group1_timed_wait, desc_branch0_group1_transfer, desc_branch0_group1_suspend});
   processor->right.branch0.group2.dma_mm2s.loadProgram({desc_branch0_group2_timed_wait, desc_branch0_group2_transfer, desc_branch0_group2_suspend});
 
