@@ -259,15 +259,12 @@ void processor_tb::test_bench()
 	wait();
   }
 
-	wait();
+  mmr->enable = 0;
 	*(done) = 1;
+	wait();
 
 		}
 
 	}
-
-	
-
-
 
 }
