@@ -1,0 +1,18 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "/usr/local/systemc-2.3.3/include/**"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/g++",
+            "cppStandard": "c++11",
+            "intelliSenseMode": "gcc-x64",
+            "compilerArgs": [
+                "-I. -I./systemc/include -L. -Lsystemc/lib-linux64 -lsystemc -lm"
+            ]
+        }
+    ],
+    "version": 4
+}

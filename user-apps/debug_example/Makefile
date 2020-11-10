@@ -14,6 +14,9 @@ all: $(TARGET)
 upload: $(TARGET)
 	scp -P 2222 $^  $(QEMU_NAME)@$(QEMU_IP):/home/root
 
+debug: 
+	ssh -p 2222 $(QEMU_NAME)@$(QEMU_IP) 'gdbserver localhost:2223 /home/root/$(TARGET)' 
+
 ssh-reset:
 	ssh-keygen -f "/home/peta/.ssh/known_hosts" -R [localhost]:2222
 clean:

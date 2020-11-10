@@ -48,6 +48,8 @@ struct Descriptor
 
 int main(int argc, char *argv[])
 {
+
+  
 	int fd, i;
 	unsigned char *base_ptr, *base_ptr_mmr, *base_dma_ptr;
 	unsigned val;
