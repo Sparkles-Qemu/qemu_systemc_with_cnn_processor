@@ -11,11 +11,13 @@
 #define SYSTEMC_DEVICE_ADDR       (0xa0800000ULL)
 #define SYSTEMC_DEVICE_MMR_ADDR   (0xa1000000ULL)
 #define SYSTEMC_DMA_ADDR          (0xa8000000ULL)
+#define SYSTEMC_PE_ADDR           (0xa9000000ULL)
 #define IMAGE_WIDTH 10
 #define IMAGE_HEIGHT 10
 #define IMAGE_SIZE IMAGE_WIDTH *IMAGE_HEIGHT
 #define SMALL_RAM_SIZE IMAGE_SIZE
 #define BIG_RAM_SIZE 3 * IMAGE_SIZE
+#define PE_GROUP_MAPPED_SZ        (4*3)
 
 #define SUSPENDED 0
 #define TRANSFER  1
@@ -46,16 +48,27 @@ struct Descriptor
 #define BRANCH2_GROUP2_DESCRIPTORS  3
 
 
+#define BRANCH0_GROUP0_WEIGTHS      3
+#define BRANCH0_GROUP1_WEIGTHS      3
+#define BRANCH0_GROUP2_WEIGHTS      3
+#define BRANCH1_GROUP0_WEIGHTS      3
+#define BRANCH1_GROUP1_WEIGHTS      3
+#define BRANCH1_GROUP2_WEIGTHS      3
+#define BRANCH2_GROUP0_WEIGTHS      3
+#define BRANCH2_GROUP1_WEIGHTS      3
+#define BRANCH2_GROUP2_WEIGHTS      3
+
+
 int main(int argc, char *argv[])
 {
 	int fd, i;
-	unsigned char *base_ptr, *base_ptr_mmr, *base_dma_ptr;
+	unsigned char *base_ptr, *base_ptr_mmr, *base_dma_ptr, *base_pe_ptr;
 	unsigned val;
 	unsigned addr, page_addr, page_offset;
 	unsigned page_size=sysconf(_SC_PAGESIZE);
 	int src[BIG_RAM_SIZE] = {0};
   float dst[64] = {0};
-	int enable_tb, enable_modules, reset_modules, error, base_dma_ptr_offset = 0;
+	int enable_tb, enable_modules, reset_modules, error, base_dma_ptr_offset = 0, base_pe_ptr_offset = 0;
 	int *memory_ptr;
 
   // Descriptor for source ram
@@ -134,7 +147,11 @@ int main(int argc, char *argv[])
                                                                 {1, 0, WAIT, BIG_RAM_SIZE + 24, 1},
                                                                 {2, 20, TRANSFER, IMAGE_SIZE, 1},
                                                                 {2, 0, SUSPENDED, 0, 1}};
-    
+   
+
+  int branch0_group0_weights[BRANCH0_GROUP0_WEIGTHS] = {1,2,3};
+  int branch0_group1_weights[BRANCH0_GROUP1_WEIGTHS] = {4,5,6};
+
   float expected_output[64] = {15678, 15813, 15948, 16083, 16218, 16353, 16488, 16623, 17028, 17163, 17298    , 17433, 17568, 17703, 17838, 17973, 18378, 18513, 18648, 18783, 18918, 19053, 19188, 19323, 19728, 19863, 19998, 20133, 20268, 20403, 20538, 20673, 21078, 21213, 21348, 21483, 21618, 21753, 21888, 22023, 22428, 22563, 22698, 22833, 22968, 23103, 23238, 23373, 23778, 23913, 24048, 24183, 24318, 24453, 24588, 24723, 25128, 25263, 25398, 25533, 25668, 25803, 25938, 26073};
 	
   //open virtual file to write to absolute address
@@ -163,8 +180,14 @@ int main(int argc, char *argv[])
 	}
 
 	base_dma_ptr = (unsigned char *) mmap(NULL,page_size,PROT_READ|PROT_WRITE,MAP_SHARED,fd,(SYSTEMC_DMA_ADDR & ~(page_size-1)));
+	
+ base_pe_ptr = (unsigned char *) mmap(NULL,page_size,PROT_READ|PROT_WRITE,MAP_SHARED,fd,(SYSTEMC_PE_ADDR & ~(page_size-1)));
 
 
+	if (base_pe_ptr == NULL) {
+
+		printf("Error mappin base_pe_ptr \n");
+	}
 
   // Fill array with data
 	for(i = 0; i < BIG_RAM_SIZE; i++) {
@@ -289,7 +312,20 @@ int main(int argc, char *argv[])
     memcpy(base_dma_ptr + base_dma_ptr_offset, (&branch2_group2_descriptors[i]), DESCRIPTOR_SZ); 
 
   }
+ 
+  base_pe_ptr_offset =  PE_GROUP_MAPPED_SZ * 0;
+  for(i = 0; i < BRANCH0_GROUP0_WEIGTHS; i++){
 
+    memcpy(base_pe_ptr + base_pe_ptr_offset, &branch0_group0_weights[i], sizeof(int));
+
+  }
+
+/*  base_pe_ptr_offset =  PE_GROUP_MAPPED_SZ * 1;
+  for(i = 0; i < BRANCH0_GROUP1_WEIGTHS; i++){
+
+    memcpy(base_pe_ptr + base_pe_ptr_offset, &branch0_group1_weights[i], sizeof(int));
+
+  }*/
   // Enable modules 
   /*enable_modules = 0;
   memcpy(base_ptr_mmr, &enable_modules, sizeof(enable_modules));

@@ -124,7 +124,7 @@ void processor_tb::test_bench()
   //processor->right.branch2.group1.dma_mm2s.loadProgram({desc_branch2_group1_timed_wait, desc_branch2_group1_transfer, desc_branch2_group1_suspend});
   //processor->right.branch2.group2.dma_mm2s.loadProgram({desc_branch2_group2_timed_wait, desc_branch2_group2_transfer, desc_branch2_group2_suspend});
 
-  processor->right.branch0.group0.loadWeights({1,2,3});
+  //processor->right.branch0.group0.loadWeights({1,2,3});
   processor->right.branch0.group1.loadWeights({4,5,6});
   processor->right.branch0.group2.loadWeights({7,8,9});
 

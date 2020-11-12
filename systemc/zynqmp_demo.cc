@@ -48,7 +48,7 @@ using namespace std;
 #include "regs.h"
 #include "dma_socket_wrapper.h"
 #include "xilinx-zynqmp.h"
-
+#include "pe_socket_wrapper.h"
 #include "checkers/pc-axilite.h"
 #include "tlm-bridges/tlm2axilite-bridge.h"
 #include "tlm-bridges/tlm2axi-bridge.h"
@@ -63,11 +63,13 @@ using namespace std;
 #include "Vaxifull_dev.h"
 #include "verilated.h"
 #endif
+#define PE_GROUP_MAPPED_SZ        (4*3) 
 
 #define DMA_SOCKET_WRAPPERS 13
+#define PE_GROUP_WRAPPERS   1
 #define NR_DEMODMA  4
 #define NR_MASTERS	1 + NR_DEMODMA
-#define NR_DEVICES	6 + NR_DEMODMA + 1 + DMA_SOCKET_WRAPPERS
+#define NR_DEVICES	6 + NR_DEMODMA + 1 + DMA_SOCKET_WRAPPERS + PE_GROUP_WRAPPERS
 
 SC_MODULE(Top)
 {
@@ -78,6 +80,7 @@ SC_MODULE(Top)
 	regs mmr;
 	debugdev *debug;
   dma_socket_wrapper *test_dma1[DMA_SOCKET_WRAPPERS];
+  pe_socket_wrapper *test_pe[PE_GROUP_WRAPPERS];
 	demodma *dma[NR_DEMODMA];
 
 	sc_signal<bool> rst, rst_n;
@@ -324,6 +327,13 @@ SC_MODULE(Top)
       snprintf(wrapper_name, sizeof wrapper_name, "wrapper%d", i);
       test_dma1[i] = new dma_socket_wrapper(wrapper_name, sizeof( Descriptor));
     }
+    
+    for(i = 0; i < PE_GROUP_WRAPPERS; i++){
+      char pe_name[16];
+
+      snprintf(pe_name, sizeof pe_name, "pe%d", i);
+      test_pe[i] = new pe_socket_wrapper(pe_name); 
+    }
 
 		bus->memmap(0xa0000000ULL, 0x100 - 1,
 				ADDRMODE_RELATIVE, -1, debug->socket);
@@ -360,6 +370,9 @@ SC_MODULE(Top)
 
     for(i = 0; i < DMA_SOCKET_WRAPPERS; i++){
 		  bus->memmap(0xa8000000ULL + sizeof(Descriptor) * i, sizeof(Descriptor) - 1, ADDRMODE_RELATIVE, -1, test_dma1[i]->socket);
+    }
+    for(i = 0; i < PE_GROUP_WRAPPERS; i++){
+		  bus->memmap(0xa9000000ULL + PE_GROUP_MAPPED_SZ * i, PE_GROUP_MAPPED_SZ - 1, ADDRMODE_RELATIVE, -1, test_pe[i]->socket);
     }
  
 		bus->memmap(0x0LL, 0xffffffff - 1,
@@ -617,7 +630,10 @@ SC_MODULE(Top)
     test_dma1[10]->dma_ptr = (&mem.processor_test_bench->processor->right.branch2.group0.dma_mm2s);
     test_dma1[11]->dma_ptr = (&mem.processor_test_bench->processor->right.branch2.group1.dma_mm2s);
     test_dma1[12]->dma_ptr = (&mem.processor_test_bench->processor->right.branch2.group2.dma_mm2s);
-
+    
+    test_pe[0]->pe_group_ptr = (&mem.processor_test_bench->processor->right.branch0.group0);
+    //test_pe[1]->pe_group_ptr = (&mem.processor_test_bench->processor->right.branch1.group0);
+    
 		zynq.tie_off();
 	}
 

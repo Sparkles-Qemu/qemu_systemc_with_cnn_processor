@@ -3,3 +3,4 @@
 *_demo
 .config.mk
 trace.vcd
+test_bench
