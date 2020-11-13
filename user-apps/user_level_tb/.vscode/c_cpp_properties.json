@@ -4,7 +4,7 @@
             "name": "Linux",
             "includePath": [
                 "/usr/local/systemc-2.3.3/include/**",
-                "${workspaceFolder}/libsystemctlm-soc/**"
+                "/usr/include/x86_64-linux-gnu/sys/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/g++",

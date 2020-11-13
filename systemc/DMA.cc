@@ -185,6 +185,23 @@ struct DMA : public sc_module
     std::cout << "DMA Module: " << name << " has been instantiated " << std::endl;
   }
 
+DMA(sc_module_name name, DmaDirection _direction, const sc_signal<bool> &_reset, const sc_signal<bool> &_enable, float *_ram) : sc_module(name) 
+  {
+    // std::cout << "DMA Module: " << name << " attempting to instantiate " << std::endl;
+
+    SC_METHOD(update);
+    sensitive << reset;
+    sensitive << clk.pos();
+
+    // connect signals
+    this->direction = _direction;
+    this->reset(_reset);
+    this->enable(_enable);
+    this->ram = _ram;
+
+    std::cout << "DMA Module: " << name << " has been instantiated " << std::endl;
+  }
+
 DMA(sc_module_name name, DmaDirection _direction, const sc_signal<bool> &_reset, const sc_signal<bool> &_enable, float *_ram, sc_signal<float, SC_MANY_WRITERS> &_stream) : sc_module(name) 
   {
     // std::cout << "DMA Module: " << name << " attempting to instantiate " << std::endl;

@@ -59,7 +59,7 @@ void dma_socket_wrapper::b_transport(tlm::tlm_generic_payload& trans, sc_time& d
 	unsigned char*   ptr = trans.get_data_ptr();
 	unsigned int     len = trans.get_data_length();
 	unsigned char*   byt = trans.get_byte_enable_ptr();
-  Descriptor *temp_descriptor;
+	Descriptor *temp_descriptor;
 
 	if (addr > sc_dt::uint64(size)) {
 		trans.set_response_status(tlm::TLM_ADDRESS_ERROR_RESPONSE);
@@ -74,8 +74,8 @@ void dma_socket_wrapper::b_transport(tlm::tlm_generic_payload& trans, sc_time& d
 
 
 	cout << "Address = " << addr << endl;
-  cout << "Length = " << len << endl;
-  cout << "Size of descriptor = " << sizeof(Descriptor) << endl;	
+  	cout << "Length = " << len << endl;
+  	cout << "Size of descriptor = " << sizeof(Descriptor) << endl;	
 
 	if (trans.get_command() == tlm::TLM_READ_COMMAND)
 		memcpy(ptr, &data_buf[addr], len);

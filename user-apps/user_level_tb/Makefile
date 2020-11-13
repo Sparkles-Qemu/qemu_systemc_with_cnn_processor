@@ -11,11 +11,15 @@ $(TARGET): $(SOURCE)
 
 all: $(TARGET)
 
-upload: $(TARGET)
+upload: clean $(TARGET) ssh-reset
 	scp -P 2222 $^  $(QEMU_NAME)@$(QEMU_IP):/home/root
 
 ssh-reset:
 	ssh-keygen -f "/home/peta/.ssh/known_hosts" -R [localhost]:2222
+
+debug: 
+	ssh -p 2222 $(QEMU_NAME)@$(QEMU_IP) 'gdbserver localhost:2223 /home/root/$(TARGET)' 
+
 clean:
 		rm -rf *.o $(TARGET)
 

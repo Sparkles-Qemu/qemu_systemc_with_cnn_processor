@@ -256,7 +256,7 @@ struct RIGHT : public sc_module
 		std::cout << "RIGHT Module: " << name << " has been instantiated" << std::endl;
 	}
 
- RIGHT(sc_core::sc_module_name name, const sc_signal<bool>& _reset, const sc_signal<bool>& _enable, float* _ram_source0, float* _ram_source1, float* _ram_source2, sc_signal<float>& _streamOut) :
+ RIGHT(sc_core::sc_module_name name, const sc_signal<bool>& _reset, const sc_signal<bool>& _enable, float* _ram_source0, float* _ram_source1, float* _ram_source2, sc_signal<float, SC_MANY_WRITERS>& _streamOut) :
                 sc_module(name),
                 interComputeBranchPsum("interComputeBranchPsum", branchCount+1),
                 branch0("branch0",  _reset, _enable, interComputeBranchPsum[0], interComputeBranchPsum[1], _ram_source0),
