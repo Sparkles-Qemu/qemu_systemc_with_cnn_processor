@@ -35,15 +35,12 @@ void pe_socket_wrapper::b_transport(tlm::tlm_generic_payload& trans, sc_time& de
 		return;
 	}
 
-  cout << "len = " << len << endl;
-  cout << "wid = " << wid << endl;
 	if (len > 4 || wid < len) {
 		trans.set_response_status(tlm::TLM_BURST_ERROR_RESPONSE);
 		return;
 	}
-
-
-	
+  
+  cout << "Addr = " << addr << endl;  
 	if(cmd == tlm::TLM_WRITE_COMMAND){
 
     temp_weight = *(reinterpret_cast<int*>(data));

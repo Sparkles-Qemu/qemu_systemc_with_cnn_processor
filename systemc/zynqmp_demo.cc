@@ -66,7 +66,7 @@ using namespace std;
 #define PE_GROUP_MAPPED_SZ        (4*3) 
 
 #define DMA_SOCKET_WRAPPERS 13
-#define PE_GROUP_WRAPPERS   1
+#define PE_GROUP_WRAPPERS   9
 #define NR_DEMODMA  4
 #define NR_MASTERS	1 + NR_DEMODMA
 #define NR_DEVICES	6 + NR_DEMODMA + 1 + DMA_SOCKET_WRAPPERS + PE_GROUP_WRAPPERS
@@ -632,7 +632,14 @@ SC_MODULE(Top)
     test_dma1[12]->dma_ptr = (&mem.processor_test_bench->processor->right.branch2.group2.dma_mm2s);
     
     test_pe[0]->pe_group_ptr = (&mem.processor_test_bench->processor->right.branch0.group0);
-    //test_pe[1]->pe_group_ptr = (&mem.processor_test_bench->processor->right.branch1.group0);
+    test_pe[1]->pe_group_ptr = (&mem.processor_test_bench->processor->right.branch0.group1);
+    test_pe[2]->pe_group_ptr = (&mem.processor_test_bench->processor->right.branch0.group2);
+    test_pe[3]->pe_group_ptr = (&mem.processor_test_bench->processor->right.branch1.group0);
+    test_pe[4]->pe_group_ptr = (&mem.processor_test_bench->processor->right.branch1.group1);
+    test_pe[5]->pe_group_ptr = (&mem.processor_test_bench->processor->right.branch1.group2);
+    test_pe[6]->pe_group_ptr = (&mem.processor_test_bench->processor->right.branch2.group0);
+    test_pe[7]->pe_group_ptr = (&mem.processor_test_bench->processor->right.branch2.group1);
+    test_pe[8]->pe_group_ptr = (&mem.processor_test_bench->processor->right.branch2.group2);
     
 		zynq.tie_off();
 	}
