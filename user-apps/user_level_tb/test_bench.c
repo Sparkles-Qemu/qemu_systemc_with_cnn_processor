@@ -386,9 +386,9 @@ int main(int argc, char *argv[])
   }
   // enable modules 
   /*enable_modules = 0;
-  memcpy(base_ptr_mmr, &enable_modules, sizeof(enable_modules));
-  enable_modules = 1;
   memcpy(base_ptr_mmr, &enable_modules, sizeof(enable_modules));*/
+  enable_modules = 1;
+  memcpy(base_ptr_mmr, &enable_modules, sizeof(enable_modules));
 
   usleep(500); //  miliseconds
   
@@ -402,8 +402,8 @@ int main(int argc, char *argv[])
   memcpy(dst, base_ptr + 1220, sizeof(dst));
 
   // Disable modules                                  
-//  enable_modules = 0;                                                                                          
-  //memcpy(base_ptr_mmr, &enable_modules, sizeof(enable_modules));
+  enable_modules = 0;                                                                                          
+  memcpy(base_ptr_mmr, &enable_modules, sizeof(enable_modules));
 
 
   //print data 

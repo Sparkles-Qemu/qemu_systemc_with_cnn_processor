@@ -93,7 +93,7 @@ void processor_tb::test_bench()
 
   // File to trace down signals  
   // Start simulation 
-  mmr->enable = 0;
+//  mmr->enable = 0;
   //reset = 1;
   
   //sc_start(0, SC_NS);
@@ -143,7 +143,7 @@ void processor_tb::test_bench()
   wait();
   //sc_start(0.5, SC_NS);
 
-  mmr->enable = 1;
+  //mmr->enable = 1;
   
   std::cout << "@" << sc_time_stamp() << " Transfer Start " << std::endl;
   
@@ -259,7 +259,7 @@ void processor_tb::test_bench()
 	wait();
   }
 
-  mmr->enable = 0;
+  //mmr->enable = 0;
 	*(done) = 1;
 	wait();
 
