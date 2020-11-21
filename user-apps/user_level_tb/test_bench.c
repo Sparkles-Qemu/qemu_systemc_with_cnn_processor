@@ -400,8 +400,8 @@ int main(int argc, char *argv[])
 
 	sleep(5); // 5 seconds
 
-	// Retrieve data bac
-	memcpy(dst, base_ptr + 1220, sizeof(dst));
+	// Retrieve data back
+  memcpy(dst, base_ptr+(512*sizeof(float)), 100*sizeof(float));
 
 	// Disable modules                                  
 	enable_modules = 0;                                                                                          

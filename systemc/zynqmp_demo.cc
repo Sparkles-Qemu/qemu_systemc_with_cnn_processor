@@ -65,7 +65,7 @@ using namespace std;
 #endif
 #define PE_GROUP_MAPPED_SZ        (4*3) 
 
-#define DMA_SOCKET_WRAPPERS 13
+#define DMA_SOCKET_WRAPPERS 14
 #define PE_GROUP_WRAPPERS   9
 #define NR_DEMODMA  4
 #define NR_MASTERS	1 + NR_DEMODMA
@@ -630,6 +630,7 @@ SC_MODULE(Top)
     test_dma1[10]->dma_ptr = (&mem.processor_test_bench->processor->right.branch2.group0.dma_mm2s);
     test_dma1[11]->dma_ptr = (&mem.processor_test_bench->processor->right.branch2.group1.dma_mm2s);
     test_dma1[12]->dma_ptr = (&mem.processor_test_bench->processor->right.branch2.group2.dma_mm2s);
+    test_dma1[13]->dma_ptr = (&mem.processor_test_bench->processor->loopback);
     
     test_pe[0]->pe_group_ptr = (&mem.processor_test_bench->processor->right.branch0.group0);
     test_pe[1]->pe_group_ptr = (&mem.processor_test_bench->processor->right.branch0.group1);

@@ -15,10 +15,10 @@
 
 struct Processor : public sc_module
 {
-	sc_signal<float> streamOut;
+	sc_signal<float, SC_MANY_WRITERS> streamOut;
 	sc_in<bool> clk;
 
-	
+
 	//float ramSource[BIG_RAM_SIZE + MEMORY_PADDING] = {0}; this mem will now be on the memory module 
 	float *ramSource = NULL; 
 	float ram0[SMALL_RAM_SIZE + MEMORY_PADDING] = {0};
@@ -28,18 +28,23 @@ struct Processor : public sc_module
 	LEFT left;
 	RIGHT right;
 
+	DMA loopback;
+
 
 	Processor(sc_core::sc_module_name name, float *_ramSource, sc_signal<bool> &_reset, sc_signal<bool> &_enable) : sc_module(name),left("mem_heirarchy", _reset, _enable, ramSource, ram0, ram1, ram2),
-	  ramSource(_ramSource), right("compute", _reset, _enable, ram0, ram1, ram2, streamOut)
+	ramSource(_ramSource), right("compute", _reset, _enable, ram0, ram1, ram2, streamOut),
+	loopback("loopback_dma", DmaDirection::S2MM, _reset, _enable, ramSource)
 	{
 		right.clk		(clk);
 		left.clk		(clk);
 		right.streamOut		(streamOut);
 		right.reset		(_reset);
 		right.enable		(_enable);
+		loopback.clk(clk);
+		loopback.stream(streamOut);
 		std::cout << "Processor Module: " << name << " has been instantiated" << std::endl;
 	}
-	
+
 	SC_HAS_PROCESS(RIGHT);
 };
 
