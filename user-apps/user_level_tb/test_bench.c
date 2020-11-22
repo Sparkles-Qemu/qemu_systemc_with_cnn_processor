@@ -6,8 +6,6 @@
 #include <fcntl.h>
 #include <stdint.h>
 
-//my includes
-
 #define SYSTEMC_DEVICE_ADDR       (0xa0800000ULL)
 #define SYSTEMC_DEVICE_MMR_ADDR   (0xa1000000ULL)
 #define SYSTEMC_DMA_ADDR          (0xa8000000ULL)
