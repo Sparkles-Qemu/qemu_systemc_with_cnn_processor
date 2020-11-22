@@ -45,10 +45,7 @@ memory::memory(sc_module_name name, sc_time latency, int size_)
 	size = size_;
 	mem = new float[size];
 	memset(&mem[0], 0, size);
-	//memset(&regs, 0, sizeof regs);
 
-	// signals and processor
-	//processor("processor", this->mem, this->clk, this->reset, this->enable);
 
 	SC_THREAD(accelerate);
 	dont_initialize();
@@ -101,16 +98,6 @@ void memory::b_transport(tlm::tlm_generic_payload& trans, sc_time& delay)
 	user_data = *(reinterpret_cast<int *>(ptr));
 
 	cout << "data = " << user_data << endl;
-	/*if(index >= 0 && index < 3) {   //this is a mmr write or read
-
-		if (trans.get_command() == tlm::TLM_READ_COMMAND)
-                	memcpy(ptr, &regs.u32[index], len);
-        	else if (cmd == tlm::TLM_WRITE_COMMAND)
-                	regs.u32[index] = user_data;
-	}*/
-
-	//Memory write or read, we need to "normalize" index again
-	//	index -= 3;
 	
 	if (trans.get_command() == tlm::TLM_READ_COMMAND)
 		memcpy(ptr, &mem[index], len);
