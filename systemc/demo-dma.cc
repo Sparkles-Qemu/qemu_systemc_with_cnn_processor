@@ -85,7 +85,7 @@ void demodma::do_dma_copy(void)
 		if (!(regs.ctrl & DEMODMA_CTRL_RUN)) {
 			wait(ev_dma_copy);
 		}
-
+		cout << "DMA running" << endl;
 		if (regs.len > 0 && regs.ctrl & DEMODMA_CTRL_RUN) {
 			unsigned int tlen = regs.len > sizeof buf ? sizeof buf : regs.len;
 
@@ -137,6 +137,10 @@ void demodma::b_transport(tlm::tlm_generic_payload& trans, sc_time& delay)
 		memcpy(&regs.u32[addr], data, len);
 		switch (addr) {
 			case 3:
+				cout << regs.dst_addr << endl;
+				cout << regs.src_addr << endl;
+				cout << regs.len << endl;
+				cout << regs.ctrl << endl;
 				// speculative read for testing inline path.
 				do_dma_trans(tlm::TLM_READ_COMMAND, buf, regs.src_addr, 4);
 				/* The dma copies after a usec.  */
