@@ -20,6 +20,9 @@
         stdout-path = "serial0:115200n8";
     };
     - or through petalinux-config and changing the boot args there
+- debugdev entry is in /proc/device-tree
+    - /proc/device-tree/debugdev@0xa0000000
+    - catting interrupts prints Y
 
 
 ## What I have done so far 
@@ -32,3 +35,14 @@
 - I added bootargs through petalinux-config
     - uio_pdrv_genirq.of_id=debuginc,generic-uio,ui_pdrv
 - Debugdev still not visible from QEMU side
+
+
+## Resources 
+- https://forums.xilinx.com/t5/Embedded-Linux/Does-anyone-have-or-know-of-an-example-using-UIO-with-a-private/td-p/1083861
+    - could be a problem with petalinux 2019.1
+
+- https://www.kernel.org/doc/html/v4.17/driver-api/uio-howto.html#using-uio-pdrv-genirq-for-platform-devices
+    - how the uio framework works
+
+- https://harmoninstruments.com/posts/uio.html
+    - uio user level example
