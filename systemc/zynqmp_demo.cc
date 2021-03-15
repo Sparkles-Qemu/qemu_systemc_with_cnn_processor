@@ -612,7 +612,7 @@ SC_MODULE(Top)
                 tlm2apb_tmr->pready(apbsig_timer_pready);
 		mem.processor_test_bench = new processor_tb("processor_tb", &mmr.mmr.enable_tb);
     mem.processor_test_bench->mmr = (&mmr);
-    mem.processor_test_bench->processor = new Processor("Processor", mem.mem, mmr.reset, mmr.enable);
+    mem.processor_test_bench->processor = new Processor("Processor", reinterpret_cast<float *>(mem.mem), mmr.reset, mmr.enable);
     mem.processor_test_bench->processor->clk(*clk);
 		mem.processor_test_bench->clk(*clk);
 
@@ -669,9 +669,9 @@ int sc_main(int argc, char* argv[])
 		sync_quantum = strtoull(argv[2], NULL, 10);
 	}
 
-	sc_set_time_resolution(1, SC_PS);
+	sc_set_time_resolution(1, SC_US);
 
-	top = new Top("top", argv[1], sc_time((double) sync_quantum, SC_NS));
+	top = new Top("top", argv[1], sc_time((double) sync_quantum, SC_US));
 
 	if (argc < 3) {
 		sc_start(1, SC_PS);

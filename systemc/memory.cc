@@ -43,7 +43,7 @@ memory::memory(sc_module_name name, sc_time latency, int size_)
 	socket.register_transport_dbg(this, &memory::transport_dbg);
 
 	size = size_;
-	mem = new float[size];
+	mem = new uint8_t[size];;
 	memset(&mem[0], 0, size);
 
 
@@ -76,8 +76,6 @@ void memory::b_transport(tlm::tlm_generic_payload& trans, sc_time& delay)
 	unsigned char*   ptr = trans.get_data_ptr();
 	unsigned int     len = trans.get_data_length();
 	unsigned char*   byt = trans.get_byte_enable_ptr();
-	int  index;
-	int user_data;
 
 	if (addr > sc_dt::uint64(size)) {
 		trans.set_response_status(tlm::TLM_ADDRESS_ERROR_RESPONSE);
@@ -90,29 +88,15 @@ void memory::b_transport(tlm::tlm_generic_payload& trans, sc_time& delay)
 		return;
 	}
 
-
 	cout << "Address = " << addr << endl;
-	
-	//since our mem array is of type float now, we have to devide addr by  4
-	index = addr / 4;
-	user_data = *(reinterpret_cast<int *>(ptr));
+	cout << "data = " << *(ptr) << endl;
 
-	cout << "data = " << user_data << endl;
-	
 	if (trans.get_command() == tlm::TLM_READ_COMMAND)
-		memcpy(ptr, &mem[index], len);
+		memcpy(ptr, &mem[addr], len);
 	else if (cmd == tlm::TLM_WRITE_COMMAND)
-		mem[index] = user_data;
+		memcpy(&mem[addr], ptr, len);
 
 	delay += LATENCY;
-	//identifier++;
-	
-	//trigger sc_thread
-
-	/*if(identifier == BIG_RAM_SIZE) {
-		printf("Identifier = %d\n", identifier);
-		processor_start.notify();
-	}*/
 
 	trans.set_dmi_allowed(true);
 	trans.set_response_status(tlm::TLM_OK_RESPONSE);

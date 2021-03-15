@@ -10,18 +10,20 @@
 
 //my includes
 #define SYSTEMC_DEVICE_ADDR (0xA0010100)
+#define SYSTEMC_MAIN_RAM_ADDR (0xa0800000ULL)
 #define DATA_SIZE	    (100)
 
 int main(int argc, char *argv[])
 {
 	int fd, fd_dmabuf;
-	char *base_ptr, *buf, ctr_flag = 1;
+	char *base_ptr, ctr_flag = 1;
+	int *buf, *base_main_ram;
 	unsigned val;
 	unsigned addr, page_addr, page_offset;
 	unsigned page_size=sysconf(_SC_PAGESIZE);
 
 	unsigned char  attr[1024];
-	unsigned int   buf_size, data_size = 100;
+	unsigned int   buf_size, data_size;  //100 bytes
 
 	uint32_t info = 1; /* unmask */
 
@@ -60,12 +62,12 @@ int main(int argc, char *argv[])
 		close(fd);
 	}
 
-	destination = phys_addr + 100;
+	destination = SYSTEMC_MAIN_RAM_ADDR;
 
 	printf("Physical address of src = %d\n", phys_addr);
 	printf("Physical address of dst = %d\n", destination);
 
-	printf("size of long = %d\n", sizeof(unsigned int));
+	printf("size of int = %d\n", sizeof(unsigned int));
 
 	//open virtual file to write to absolute address
 	fd=open("/dev/mem",O_RDWR);
@@ -77,6 +79,7 @@ int main(int argc, char *argv[])
 	page_addr=(SYSTEMC_DEVICE_ADDR & ~(page_size-1));
 	page_offset=SYSTEMC_DEVICE_ADDR - page_addr;
 	base_ptr = (char *)mmap(NULL,page_size,PROT_READ|PROT_WRITE,MAP_SHARED,fd,(SYSTEMC_DEVICE_ADDR & ~(page_size-1)));
+	base_main_ram = (int *)mmap(NULL,page_size,PROT_READ|PROT_WRITE,MAP_SHARED,fd,(SYSTEMC_MAIN_RAM_ADDR & ~(page_size-1)));
 
 	if ((fd_dmabuf = open("/dev/udmabuf0", O_RDWR))  == -1) {
 
@@ -84,11 +87,14 @@ int main(int argc, char *argv[])
 		close(fd);
 	}
 
-	buf = (char *)mmap(NULL, buf_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd_dmabuf, 0);
+	buf = (int *)mmap(NULL, buf_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd_dmabuf, 0);
 
+	data_size = DATA_SIZE * sizeof(buf[0]);
+
+	printf("data_size = %d\n", data_size);
 	//fill buffer with some dummy data 
 	printf("Filling up the buffer with dummy data\n");
-	for(int i = 0; i < 100; i++){
+	for(int i = 0; i < DATA_SIZE; i++){
 		*(buf + i) = i + 1;
 		printf("%d\n", *(buf + i));
 	}
@@ -106,8 +112,8 @@ int main(int argc, char *argv[])
 		nb = read(uio_fd, &info, sizeof(info));
 		if (nb == (ssize_t)sizeof(info)) {
 			printf("Interrupt #%u!\n", info);
-			for(int i = 100; i < data_size * 2; i++) {
-				printf("%d\n", *(buf + i));
+			for(int i = 0; i < DATA_SIZE; i++) {
+				printf("%d\n", *(base_main_ram + i));
 			}
 		}
 	} else {
