@@ -117,6 +117,7 @@ struct DMA : public sc_module
 		{
 			// assume at least one descriptor is in dma at all times
 			execute_index = 0;
+			trans_finished.write(0);
 			descriptors.clear();
 			descriptors.push_back(default_descriptor);
 			current_ram_index = descriptors[execute_index].start;
@@ -152,10 +153,14 @@ struct DMA : public sc_module
 			}
 
 			x_count_remaining--;
+			trans_finished.write(0);
 
 			if (x_count_remaining == (unsigned int)0) // descriptor is finished, load next descriptor
 			{
-				trans_finished.write(1);
+				if(descriptors[execute_index].state == TRANSFER)
+					trans_finished.write(1);
+
+				cout << "Finished transaction" << endl;
 				execute_index = descriptors[execute_index].next;
 				current_ram_index = descriptors[execute_index].start;
 				x_count_remaining = descriptors[execute_index].x_count;

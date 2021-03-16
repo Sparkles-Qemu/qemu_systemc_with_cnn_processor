@@ -55,6 +55,8 @@ private:
 	void do_dma_copy(void);
 	void update_irqs(void);
 
+	void enable_transfer(void);
+
 	virtual void b_transport(tlm::tlm_generic_payload& trans,
 					sc_time& delay);
 };

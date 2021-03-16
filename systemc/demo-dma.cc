@@ -45,6 +45,9 @@ demodma::demodma(sc_module_name name)
 	SC_THREAD(do_dma_copy);
 	dont_initialize();
 	sensitive << ev_dma_copy;
+
+	SC_THREAD(enable_transfer);
+	sensitive << transfer_ready;
 }
 
 void demodma::do_dma_trans(tlm::tlm_command cmd, unsigned char *buf,
@@ -82,7 +85,7 @@ void demodma::do_dma_copy(void)
 	unsigned char buf[32];
 
 	while (true) {
-		if (!(regs.ctrl & DEMODMA_CTRL_RUN) || !(transfer_ready.read() == 1)) {
+		if (!(regs.ctrl & DEMODMA_CTRL_RUN)) {
 			wait(ev_dma_copy);
 		}
 		cout << "DMA running" << endl;
@@ -152,4 +155,20 @@ void demodma::b_transport(tlm::tlm_generic_payload& trans, sc_time& delay)
 		}
 	}
 	trans.set_response_status(tlm::TLM_OK_RESPONSE);
+}
+
+void demodma::enable_transfer(void)
+{
+	while(true){
+		//wait one transfer_ready signal
+		wait();
+		if(transfer_ready.read() == 1){
+			regs.ctrl |= DEMODMA_CTRL_RUN;
+			ev_dma_copy.notify(sc_time(1, SC_US));	
+			cout << " Notified ev_dma_copy" << endl;
+		}else{
+			cout << " transfer_ready signal is low" << endl;
+		}
+	}
+
 }

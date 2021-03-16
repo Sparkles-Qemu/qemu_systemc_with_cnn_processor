@@ -11,7 +11,7 @@
 #define SYSTEMC_DEVICE_MMR_ADDR   (0xa1000000ULL)
 #define SYSTEMC_DMA_ADDR          (0xa8000000ULL)
 #define SYSTEMC_PE_ADDR           (0xa9000000ULL)
-#define SYSTEMC_DEMO_DMA_ADDR 	  (0xA0010100)
+#define SYSTEMC_DEMO_DMA_ADDR 	  (0xA0010000)
 #define IMAGE_WIDTH 10
 #define IMAGE_HEIGHT 10
 #define IMAGE_SIZE IMAGE_WIDTH *IMAGE_HEIGHT
@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
 	unsigned val;
 	unsigned addr, page_addr, page_offset;
 	unsigned page_size=sysconf(_SC_PAGESIZE);
-	int src[BIG_RAM_SIZE] = {0};
+	//int src[BIG_RAM_SIZE] = {0};
 	int dst[64] = {0};
 	int enable_tb, enable_modules, reset_modules, error, base_dma_ptr_offset = 0, base_pe_ptr_offset = 0;
 	int *memory_ptr, *buf;
@@ -287,6 +287,16 @@ int main(int argc, char *argv[])
 	memcpy(base_demo_dma_ptr + 8, &data_size, sizeof(data_size));
 	memcpy(base_demo_dma_ptr + 12, &ctr_flag, sizeof(ctr_flag));
 
+	//setup second demo_dma
+	unsigned int src;
+	destination = phys_addr;
+	src = SYSTEMC_DEVICE_ADDR + (512*sizeof(int));
+	data_size = sizeof(dst);
+
+	memcpy(base_demo_dma_ptr + 0x100, &destination, sizeof(destination));	
+	memcpy(base_demo_dma_ptr + 0x100 + 4, &src, sizeof(src));
+	memcpy(base_demo_dma_ptr + 0x100 + 8, &data_size, sizeof(data_size));
+
 	//reset modules
 	reset_modules = 1;
 	memcpy(base_ptr_mmr + 4, &reset_modules, sizeof(reset_modules));
@@ -473,10 +483,11 @@ int main(int argc, char *argv[])
 	enable_modules = 1;
 	memcpy(base_ptr_mmr, &enable_modules, sizeof(enable_modules));
 
-	sleep(5); // 5 seconds
+	sleep(15); // 5 seconds
 
 	// Retrieve data back
- 	memcpy(dst, base_ptr+(512*sizeof(int)), sizeof(dst)); 
+ 	//memcpy(dst, base_ptr+(512*sizeof(int)), sizeof(dst)); 
+ 	memcpy(dst, buf, sizeof(dst)); 
 
 	// Disable modules                                  
 	enable_modules = 0;                                                                                          

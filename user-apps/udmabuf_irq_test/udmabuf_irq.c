@@ -9,7 +9,7 @@
 #include <errno.h>
 
 //my includes
-#define SYSTEMC_DEVICE_ADDR (0xA0010100)
+#define SYSTEMC_DEVICE_ADDR (0xA0010300)
 #define DATA_SIZE	    (100)
 
 int main(int argc, char *argv[])
