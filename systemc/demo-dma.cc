@@ -88,7 +88,7 @@ void demodma::do_dma_copy(void)
 		cout << "DMA running" << endl;
 		if (regs.len > 0 && regs.ctrl & DEMODMA_CTRL_RUN) {
 			unsigned int tlen = regs.len > sizeof buf ? sizeof buf : regs.len;
-
+			cout << "tlen = " << tlen << endl;
 			do_dma_trans(tlm::TLM_READ_COMMAND, buf, regs.src_addr, tlen);
 			do_dma_trans(tlm::TLM_WRITE_COMMAND, buf, regs.dst_addr, tlen);
 

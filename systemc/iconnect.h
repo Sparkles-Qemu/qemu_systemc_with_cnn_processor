@@ -214,7 +214,7 @@ void iconnect<N_INITIATORS, N_TARGETS>::b_transport(int id,
 
 	trans.set_address(offset);
 	/* Forward the transaction.  */
-	cout << "target_nr = " << target_nr << endl;
+	//cout << "target_nr = " << target_nr << endl;
 	(*i_sk[target_nr])->b_transport(trans, delay);
 	/* Restore the addresss.  */
 	trans.set_address(addr);
