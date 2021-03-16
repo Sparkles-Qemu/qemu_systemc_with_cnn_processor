@@ -73,9 +73,9 @@ void dma_socket_wrapper::b_transport(tlm::tlm_generic_payload& trans, sc_time& d
 	}
 
 
-	/*cout << "Address = " << addr << endl;
-	cout << "Length = " << len << endl;
-	cout << "Size of descriptor = " << sizeof(Descriptor) << endl;	*/
+	cout << "Address = " << addr << endl;
+  cout << "Length = " << len << endl;
+  cout << "Size of descriptor = " << sizeof(Descriptor) << endl;	
 
 	if (trans.get_command() == tlm::TLM_READ_COMMAND)
 		memcpy(ptr, &data_buf[addr], len);
@@ -84,12 +84,12 @@ void dma_socket_wrapper::b_transport(tlm::tlm_generic_payload& trans, sc_time& d
 
 
   if(addr + len == USER_SPACE_DESCRIPTOR_SIZE) {
-      //cout << " Recieved a full descriptor" << endl;
+      cout << " Recieved a full descriptor" << endl;
 
       temp_descriptor = reinterpret_cast<Descriptor *>(data_buf);
       if(dma_ptr != NULL){
           dma_ptr->load_descriptor((*temp_descriptor));
-          //dma_ptr->print_descriptors();
+          dma_ptr->print_descriptors();
 
       }else{
           cout<< "dma_ptr is NULL" << endl;

@@ -46,7 +46,7 @@ public:
 	void accelerate();
 
 	processor_tb *processor_test_bench;
-	uint8_t	*mem;	
+	float	*mem;	
 
 	sc_event processor_start;
 	SC_HAS_PROCESS(memory);

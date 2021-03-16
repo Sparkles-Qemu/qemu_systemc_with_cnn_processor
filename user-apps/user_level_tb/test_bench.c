@@ -4,14 +4,12 @@
 #include <unistd.h>
 #include <sys/mman.h>
 #include <fcntl.h>
-#include <poll.h>
 #include <stdint.h>
 
 #define SYSTEMC_DEVICE_ADDR       (0xa0800000ULL)
 #define SYSTEMC_DEVICE_MMR_ADDR   (0xa1000000ULL)
 #define SYSTEMC_DMA_ADDR          (0xa8000000ULL)
 #define SYSTEMC_PE_ADDR           (0xa9000000ULL)
-#define SYSTEMC_DEMO_DMA_ADDR 	  (0xA0010100)
 #define IMAGE_WIDTH 10
 #define IMAGE_HEIGHT 10
 #define IMAGE_SIZE IMAGE_WIDTH *IMAGE_HEIGHT
@@ -61,63 +59,15 @@ struct Descriptor
 
 int main(int argc, char *argv[])
 {
-	int fd, i, fd_dmabuf;
-	unsigned char *base_ptr, *base_ptr_mmr, *base_dma_ptr, *base_pe_ptr, *base_demo_dma_ptr;
-	char ctr_flag = 1;
+	int fd, i;
+	unsigned char *base_ptr, *base_ptr_mmr, *base_dma_ptr, *base_pe_ptr;
 	unsigned val;
 	unsigned addr, page_addr, page_offset;
 	unsigned page_size=sysconf(_SC_PAGESIZE);
 	int src[BIG_RAM_SIZE] = {0};
-	int dst[64] = {0};
+	float dst[64] = {0};
 	int enable_tb, enable_modules, reset_modules, error, base_dma_ptr_offset = 0, base_pe_ptr_offset = 0;
-	int *memory_ptr, *buf;
-
-	unsigned char  attr[1024];
-	unsigned int   buf_size, data_size;
-
-	uint32_t info = 1; /* unmask */
-
-	//open up uio device 
-	int uio_fd = open("/dev/uio1", O_RDWR);
-	if (uio_fd < 0) {
-		perror("open");
-		exit(EXIT_FAILURE);
-	}
-
-	//unmask irq
-	ssize_t nb = write(uio_fd, &info, sizeof(info));
-	if (nb != (ssize_t)sizeof(info)) {
-		perror("write");
-		close(fd);
-		exit(EXIT_FAILURE);
-	}
-
-	struct pollfd uio_fds = {
-		.fd = uio_fd,
-		.events = POLLIN,
-	};
-
-	//extract size
-	if ((fd  = open("/sys/class/u-dma-buf/udmabuf0/size", O_RDONLY)) != -1) {
-		read(fd, attr, 1024);
-		sscanf(attr, "%d", &buf_size);
-		close(fd);
-	}
-
-	//extract physical address
-	unsigned int phys_addr, destination;
-	if ((fd  = open("/sys/class/u-dma-buf/udmabuf0/phys_addr", O_RDONLY)) != -1) {
-		read(fd, attr, 1024);
-		sscanf(attr, "%x", &phys_addr);
-		close(fd);
-	}
-
-	destination = SYSTEMC_DEVICE_ADDR;
-
-	printf("Physical address of src = %d\n", phys_addr);
-	printf("Physical address of dst = %04x\n", destination);
-
-	printf("size of long = %d\n", sizeof(unsigned int));
+	int *memory_ptr;
 
 	// Descriptor for source ram
 	struct Descriptor desc_mm2s = {0, 0, TRANSFER, BIG_RAM_SIZE, 1};
@@ -251,41 +201,14 @@ int main(int argc, char *argv[])
 		printf("Error mappin base_pe_ptr \n");
 	}
 
-	base_demo_dma_ptr = (unsigned char *) mmap(NULL,page_size,PROT_READ|PROT_WRITE,MAP_SHARED,fd,(SYSTEMC_DEMO_DMA_ADDR & ~(page_size-1)));
-
-	if(base_demo_dma_ptr == NULL){
-		printf("Error mapping base_dmo_dma");
-		exit(1);
-	}
-
-	if ((fd_dmabuf = open("/dev/udmabuf0", O_RDWR))  == -1) {
-
-		printf("Could not open /de/udmabuf0");
-		close(fd);
-	}
-
-	buf = (int *)mmap(NULL, buf_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd_dmabuf, 0);
 	// Fill array with data
-	/*for(i = 0; i < BIG_RAM_SIZE; i++) {
+	for(i = 0; i < BIG_RAM_SIZE; i++) {
 		src[i] = i + 1;
-	}*/
-
-	data_size = BIG_RAM_SIZE * sizeof(buf[0]);
-
-	printf("data_size = %d\n", data_size);
-	// Write data
-	//memcpy(base_ptr, src, sizeof(src));
-	printf("Filling up the buffer with dummy data\n");
-	for(int i = 0; i < BIG_RAM_SIZE; i++){
-		*(buf + i) = i + 1;
-		printf("%d\n", *(buf + i));
 	}
 
-	//setting up demo_dma. use memcpy to write to device
-	memcpy(base_demo_dma_ptr, &destination, sizeof(destination));	
-	memcpy(base_demo_dma_ptr + 4, &phys_addr, sizeof(phys_addr));
-	memcpy(base_demo_dma_ptr + 8, &data_size, sizeof(data_size));
-	memcpy(base_demo_dma_ptr + 12, &ctr_flag, sizeof(ctr_flag));
+	// Write data
+	memcpy(base_ptr, src, sizeof(src));
+
 
 	//reset modules
 	reset_modules = 1;
@@ -476,7 +399,7 @@ int main(int argc, char *argv[])
 	sleep(5); // 5 seconds
 
 	// Retrieve data back
- 	memcpy(dst, base_ptr+(512*sizeof(int)), sizeof(dst)); 
+  memcpy(dst, base_ptr+(512*sizeof(float)), sizeof(dst)); 
 
 	// Disable modules                                  
 	enable_modules = 0;                                                                                          
@@ -486,7 +409,7 @@ int main(int argc, char *argv[])
 	//print data 
 	for(i = 0; i < 64; i++) {
 
-		printf("value read back = %d\n",  dst[i]);
+		printf("value read back = %f\n",  dst[i]);
 		if(dst[i] != expected_output[i])  error++;
 	}
 
