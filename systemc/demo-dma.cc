@@ -82,7 +82,7 @@ void demodma::do_dma_copy(void)
 	unsigned char buf[32];
 
 	while (true) {
-		if (!(regs.ctrl & DEMODMA_CTRL_RUN)) {
+		if (!(regs.ctrl & DEMODMA_CTRL_RUN) || !(transfer_ready.read() == 1)) {
 			wait(ev_dma_copy);
 		}
 		cout << "DMA running" << endl;

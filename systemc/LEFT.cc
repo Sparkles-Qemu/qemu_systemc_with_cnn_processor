@@ -10,6 +10,7 @@ SC_MODULE(LEFT)
 	// Stream from MM2S to S2MMs
 	sc_signal<float,SC_MANY_WRITERS> stream_bus;
 	sc_in<bool> clk;
+	sc_vector<sc_signal<bool> > trans_finished;
 
 	// Memory To Stream
 	DMA dma_mm2s;
@@ -22,12 +23,17 @@ SC_MODULE(LEFT)
 		dma_mm2s("internal_mm2s", DmaDirection::MM2S, _reset, _enable, _ram_source, stream_bus),
 		dma_s2mm1("internal_s2mm1", DmaDirection::S2MM,_reset, _enable, _ram_dest1, stream_bus),
 		dma_s2mm2("internal_s2mm2", DmaDirection::S2MM, _reset, _enable, _ram_dest2, stream_bus),
-		dma_s2mm3("internal_s2mm3", DmaDirection::S2MM, _reset, _enable, _ram_dest3, stream_bus)
+		dma_s2mm3("internal_s2mm3", DmaDirection::S2MM, _reset, _enable, _ram_dest3, stream_bus),
+		trans_finished("trans_finished_sigs", 4)
 	{
 		dma_mm2s.clk		(clk);
+		dma_mm2s.trans_finished (trans_finished[0]);
 		dma_s2mm1.clk		(clk);
+		dma_s2mm1.trans_finished (trans_finished[1]);
 		dma_s2mm2.clk		(clk);
+		dma_s2mm2.trans_finished (trans_finished[2]);
 		dma_s2mm3.clk		(clk);
+		dma_s2mm3.trans_finished (trans_finished[3]);
 		std::cout << "Module: " << name << " has been instantiated" << std::endl;
 	}
 	

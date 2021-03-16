@@ -22,6 +22,8 @@ struct PE_GROUP : public sc_module
 	// Memory To Stream
 	DMA dma_mm2s;
 
+    //dummy transfer finished signal 
+    sc_signal<bool> trans_finished;
     void update() {
         if(reset.read() == 1) {
             psumOut.write(0);
@@ -66,6 +68,10 @@ struct PE_GROUP : public sc_module
 		reset(_reset);
 		enable(_enable);
 
+
+        dma_mm2s.trans_finished(trans_finished);
+
+
 		for(unsigned int i = 0; i<arraySize; i++)
 		{
 		    peArray[i].pixelIn(pixelInBus);
@@ -103,6 +109,7 @@ PE_GROUP(sc_core::sc_module_name name, const sc_signal<bool>& _reset, const sc_s
                 reset(_reset);
                 enable(_enable);
 		dma_mm2s.clk	(clk);
+        dma_mm2s.trans_finished(trans_finished); 
 
                 for(unsigned int i = 0; i<arraySize; i++)
                 {

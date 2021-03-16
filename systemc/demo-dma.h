@@ -34,6 +34,7 @@ public:
 	tlm_utils::simple_target_socket<demodma> tgt_socket;
 
 	sc_out<bool> irq;
+	sc_signal<bool> transfer_ready;
 	demodma(sc_core::sc_module_name name);
 	SC_HAS_PROCESS(demodma);
 private:

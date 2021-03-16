@@ -55,6 +55,8 @@ struct DMA : public sc_module
 	float *ram;
 	sc_inout<float> stream;
 
+	//transfer finish signal 
+	sc_out<bool> trans_finished;
 	// Internal Data
 	std::vector<Descriptor> descriptors;
 	unsigned int execute_index;
@@ -153,6 +155,7 @@ struct DMA : public sc_module
 
 			if (x_count_remaining == (unsigned int)0) // descriptor is finished, load next descriptor
 			{
+				trans_finished.write(1);
 				execute_index = descriptors[execute_index].next;
 				current_ram_index = descriptors[execute_index].start;
 				x_count_remaining = descriptors[execute_index].x_count;

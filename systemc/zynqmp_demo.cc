@@ -616,6 +616,12 @@ SC_MODULE(Top)
     mem.processor_test_bench->processor->clk(*clk);
 		mem.processor_test_bench->clk(*clk);
 
+
+
+	mem.processor_test_bench->processor->loopback.trans_finished(dma[1]->transfer_ready);
+
+
+
     //Manual connection of dma
     test_dma1[0]->dma_ptr = (&mem.processor_test_bench->processor->left.dma_mm2s);
     test_dma1[1]->dma_ptr = (&mem.processor_test_bench->processor->left.dma_s2mm1);
