@@ -77,6 +77,8 @@ void demodma::do_dma_trans(tlm::tlm_command cmd, unsigned char *buf,
 
 void demodma::update_irqs(void)
 {
+	bool write_out = regs.ctrl & DEMODMA_CTRL_DONE;
+	cout << "irq write = " << write_out << endl;
 	irq.write(regs.ctrl & DEMODMA_CTRL_DONE);
 }
 
@@ -163,11 +165,12 @@ void demodma::enable_transfer(void)
 		//wait one transfer_ready signal
 		wait();
 		if(transfer_ready.read() == 1){
-			regs.ctrl |= DEMODMA_CTRL_RUN;
+			regs.ctrl = DEMODMA_CTRL_RUN;
 			ev_dma_copy.notify(sc_time(1, SC_US));	
 			cout << " Notified ev_dma_copy" << endl;
 		}else{
 			cout << " transfer_ready signal is low" << endl;
+			regs.ctrl = ~DEMODMA_CTRL_RUN;
 		}
 	}
 

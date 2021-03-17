@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
 	uint32_t info = 1; /* unmask */
 
 	//open up uio device 
-	int uio_fd = open("/dev/uio1", O_RDWR);
+	int uio_fd = open("/dev/uio2", O_RDWR);
 	if (uio_fd < 0) {
 		perror("open");
 		exit(EXIT_FAILURE);
@@ -483,16 +483,24 @@ int main(int argc, char *argv[])
 	enable_modules = 1;
 	memcpy(base_ptr_mmr, &enable_modules, sizeof(enable_modules));
 
-	sleep(15); // 5 seconds
+	int ret = poll(&uio_fds, 1, -1);
+	if (ret >= 1) {
+		nb = read(uio_fd, &info, sizeof(info));
+		if (nb == (ssize_t)sizeof(info)) {
+			printf("Interrupt #%u!\n", info);
 
-	// Retrieve data back
- 	//memcpy(dst, base_ptr+(512*sizeof(int)), sizeof(dst)); 
- 	memcpy(dst, buf, sizeof(dst)); 
+			// Retrieve data back
+ 			memcpy(dst, buf, sizeof(dst)); 
 
-	// Disable modules                                  
-	enable_modules = 0;                                                                                          
-	memcpy(base_ptr_mmr, &enable_modules, sizeof(enable_modules));
-
+			// Disable modules                                  
+			enable_modules = 0;                                                                                          
+			memcpy(base_ptr_mmr, &enable_modules, sizeof(enable_modules));
+		}
+	} else {
+		perror("poll()");
+		close(uio_fd);
+		exit(EXIT_FAILURE);
+	}
 
 	//print data 
 	for(i = 0; i < 64; i++) {

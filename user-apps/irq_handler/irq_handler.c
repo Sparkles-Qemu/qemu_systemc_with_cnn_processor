@@ -7,7 +7,7 @@
 
 int main(void)
 {
-    int fd = open("/dev/uio0", O_RDWR);
+    int fd = open("/dev/uio2", O_RDWR);
     if (fd < 0) {
         perror("open");
         exit(EXIT_FAILURE);

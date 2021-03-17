@@ -9,7 +9,7 @@
 #include <errno.h>
 
 //my includes
-#define SYSTEMC_DEVICE_ADDR (0xA0010300)
+#define SYSTEMC_DEVICE_ADDR (0xA0010000)
 #define DATA_SIZE	    (100)
 
 int main(int argc, char *argv[])
@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 	uint32_t info = 1; /* unmask */
 
 	//open up uio device 
-	int uio_fd = open("/dev/uio1", O_RDWR);
+	int uio_fd = open("/dev/uio2", O_RDWR);
 	if (uio_fd < 0) {
 		perror("open");
 		exit(EXIT_FAILURE);
@@ -95,10 +95,10 @@ int main(int argc, char *argv[])
 
 
 	//setting up demo_dma. use memcpy to write to device
-	memcpy(base_ptr, &destination, sizeof(destination));	
-	memcpy(base_ptr + 4, &phys_addr, sizeof(phys_addr));
-	memcpy(base_ptr + 8, &data_size, sizeof(data_size));
-	memcpy(base_ptr + 12, &ctr_flag, sizeof(ctr_flag));
+	memcpy(base_ptr + 0x100, &destination, sizeof(destination));	
+	memcpy(base_ptr + 0x100 + 4, &phys_addr, sizeof(phys_addr));
+	memcpy(base_ptr + 0x100 + 8, &data_size, sizeof(data_size));
+	memcpy(base_ptr + 0x100 + 12, &ctr_flag, sizeof(ctr_flag));
 	
 	//wait for interrupt
 	int ret = poll(&uio_fds, 1, -1);
