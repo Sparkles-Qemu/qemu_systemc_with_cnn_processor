@@ -6,57 +6,16 @@
 #include <fcntl.h>
 #include <poll.h>
 #include <stdint.h>
+#include "io_access_lib.h"
 
-#define SYSTEMC_DEVICE_ADDR       (0xa0800000ULL)
-#define SYSTEMC_DEVICE_MMR_ADDR   (0xa1000000ULL)
-#define SYSTEMC_DMA_ADDR          (0xa8000000ULL)
-#define SYSTEMC_PE_ADDR           (0xa9000000ULL)
-#define SYSTEMC_DEMO_DMA_ADDR 	  (0xA0010000)
+
 #define IMAGE_WIDTH 10
 #define IMAGE_HEIGHT 10
 #define IMAGE_SIZE IMAGE_WIDTH *IMAGE_HEIGHT
 #define SMALL_RAM_SIZE IMAGE_SIZE
 #define BIG_RAM_SIZE 3 * IMAGE_SIZE
-#define PE_GROUP_MAPPED_SZ        (4*3)
 
-#define SUSPENDED 0
-#define TRANSFER  1
-#define TRANSFER_WITH_FORWARD 2
-#define WAIT 3
 
-struct Descriptor
-{
-	uint32_t next;     // index of next descriptor
-	uint32_t start;    // start index in ram array
-	uint32_t state;    // state of dma
-	uint32_t x_count;  // number of floats to transfer/wait
-	uint32_t x_modify; // number of floats between each transfer/wait
-};
-
-#define DESCRIPTOR_SZ     sizeof( struct Descriptor)
-#define RAM1_DESCRIPTORS	          3
-#define RAM2_DESCRIPTORS	          3
-#define RAM3_DESCRIPTORS	          3
-#define BRANCH0_GROUP0_DESCRIPTORS  3
-#define BRANCH0_GROUP1_DESCRIPTORS  3
-#define BRANCH0_GROUP2_DESCRIPTORS  3
-#define BRANCH1_GROUP0_DESCRIPTORS  3
-#define BRANCH1_GROUP1_DESCRIPTORS  3
-#define BRANCH1_GROUP2_DESCRIPTORS  3
-#define BRANCH2_GROUP0_DESCRIPTORS  3
-#define BRANCH2_GROUP1_DESCRIPTORS  3
-#define BRANCH2_GROUP2_DESCRIPTORS  3
-#define LOOPBACK_DESCRIPTORS 3
-
-#define BRANCH0_GROUP0_WEIGTHS      3
-#define BRANCH0_GROUP1_WEIGTHS      3
-#define BRANCH0_GROUP2_WEIGTHS      3
-#define BRANCH1_GROUP0_WEIGTHS      3
-#define BRANCH1_GROUP1_WEIGTHS      3
-#define BRANCH1_GROUP2_WEIGTHS      3
-#define BRANCH2_GROUP0_WEIGTHS      3
-#define BRANCH2_GROUP1_WEIGTHS      3
-#define BRANCH2_GROUP2_WEIGTHS      3
 
 
 int main(int argc, char *argv[])
