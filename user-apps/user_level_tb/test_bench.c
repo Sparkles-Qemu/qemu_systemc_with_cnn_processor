@@ -88,6 +88,7 @@ int main(int argc, char *argv[])
 	}
 
 
+	//This fails b/c were not filtering the data
 	if(error == 0)
 		printf("Test bench success\n");
 	else

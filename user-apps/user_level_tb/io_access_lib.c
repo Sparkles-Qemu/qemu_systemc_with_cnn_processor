@@ -14,8 +14,8 @@
 #define PROCESSOR_RESET_OFFSET 4
 #define PROCESSOR_ENABLE_OFFSET 0
 
-#define OUPUT_FEATURE_MAP_OFFSET (512*sizeof(int))
-#define OUPUT_FEATURE_MAP_SZ 64
+#define OUPUT_FEATURE_MAP_OFFSET (512*sizeof(uint32_t))
+#define OUPUT_FEATURE_MAP_SZ (64 * sizeof(uint32_t))
 
 bool program_dmas(uint8_t *dma_ptr, uint32_t src, uint32_t dst, int len)
 {
