@@ -1,7 +1,7 @@
 CROSS_COMPILE=aarch64-linux-gnu-
 CC=$(CROSS_COMPILE)gcc
 CFLAGS=-g
-OBJS :=test_bench.o io_access_lib.o
+OBJS :=test_bench.o io_access_lib.o user_lvl_driver.o
 TARGET=test_bench
 SOURCE=test_bench.c
 QEMU_NAME=root

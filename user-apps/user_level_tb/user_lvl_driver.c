@@ -1,21 +1,37 @@
+#include "user_lvl_driver.h"
+#include "weights.h"
 #include "io_access_lib.h"
 #include "descriptors.h"
-#include "weights.h"
+#include <stdio.h>
+#include <unistd.h>
+#include <poll.h>
+#include <string.h>
 
-#define SYSTEMC_MAIN_RAM_ADDR       (0xa0800000ULL)
+#define SYSTEMC_MAIN_RAM_ADDR     (0xa0800000ULL)
 #define SYSTEMC_DEVICE_MMR_ADDR   (0xa1000000ULL)
 #define SYSTEMC_DMA_ADDR          (0xa8000000ULL)
 #define SYSTEMC_PE_ADDR           (0xa9000000ULL)
 #define SYSTEMC_DEMO_DMA_ADDR 	  (0xA0010000)
 
-
-bool setup(int data_len)
+// This function had to be created here so that I can places all descriptors in .h file
+// Otherwise variables got redefined 
+static bool send_descriptors(uint8_t *dma_ptr, const struct Descriptor *descriptors, int num_descriptors)
 {
-    //reset processor
-    //setup irq
-    //setup demo dmas
-    //setup descriptors
-    //setup weigths
+    int ret = SUCCESS;
+    int i;
+
+    if(dma_ptr == NULL || descriptors == NULL) {
+        fprintf(stderr, "Cant send descriptors with null pointers\n");
+        return FAILED;
+    }
+
+    for(i = 0; i < num_descriptors; i++){
+
+		memcpy(dma_ptr, (&descriptors[i]), DESCRIPTOR_SZ); 
+
+	}
+
+    return ret;
 }
 
 bool program_axi_dmas(int data_len)
@@ -47,7 +63,7 @@ bool reset(void)
     unsigned char *base_mmr_ptr = NULL;
 
     //get io access
-    if((ret = get_io_access(&base_mmr_ptr, SYSTEMC_DEVICE_MMR_ADDR)){
+    if((ret = get_io_access(&base_mmr_ptr, SYSTEMC_DEVICE_MMR_ADDR))){
         fprintf(stderr, "Could not get io access for SYSTEMC_DEVICE_MMR_ADDR\n");
         return FAILED;
     }
@@ -64,7 +80,7 @@ bool send_all_weights(void)
 
     //get io access
     if(ret = get_io_access(&base_pe_ptr, SYSTEMC_PE_ADDR)){
-        fprintf("Coudl not get io access to PEs\n");
+        fprintf(stderr, "Coudl not get io access to PEs\n");
         return FAILED;
     }
 
@@ -133,7 +149,7 @@ bool send_all_descriptors(void)
 
 	// Send branch0_group1 descriptors
 	base_dma_ptr_offset = DESCRIPTOR_SZ * 5;
-    ret |= send_descriptors(base_dma_ptr + base_dma_ptr_offset, branch0_group1_descriptors);
+    ret |= send_descriptors(base_dma_ptr + base_dma_ptr_offset, branch0_group1_descriptors, BRANCH0_GROUP1_DESCRIPTORS);
 
 	// Send branch0_group2 descriptors
 	base_dma_ptr_offset = DESCRIPTOR_SZ * 6;
@@ -174,7 +190,7 @@ bool start_processor(void)
     unsigned char *base_mmr_ptr = NULL;
 
     //get io access
-    if((ret = get_io_access(&base_mmr_ptr, SYSTEMC_DEVICE_MMR_ADDR)){
+    if((ret = get_io_access(&base_mmr_ptr, SYSTEMC_DEVICE_MMR_ADDR))){
         fprintf(stderr, "Could not get io access for SYSTEMC_DEVICE_MMR_ADDR\n");
         return FAILED;
     }
@@ -183,13 +199,14 @@ bool start_processor(void)
 
     return ret;
 }
+
 bool stop_processor(void)
 {
     int ret = SUCCESS;
     unsigned char *base_mmr_ptr = NULL;
 
     //get io access
-    if((ret = get_io_access(&base_mmr_ptr, SYSTEMC_DEVICE_MMR_ADDR)){
+    if((ret = get_io_access(&base_mmr_ptr, SYSTEMC_DEVICE_MMR_ADDR))){
         fprintf(stderr, "Could not get io access for SYSTEMC_DEVICE_MMR_ADDR\n");
         return FAILED;
     }
@@ -208,7 +225,7 @@ int get_cma_size(void)
 
     return ret == SUCCESS ? (int)buf_size : 0;
 }
-unsigned int get_cma_phy_addr(void)
+uint32_t get_cma_phy_addr(void)
 {
     int ret = SUCCESS;
     unsigned int phy_addr = 0;
@@ -219,12 +236,19 @@ unsigned int get_cma_phy_addr(void)
     return ret == SUCCESS ? phy_addr : 0;
 }
 
-bool get_mem_ptr(unsigned char **buf_ptr)
+bool get_mem_ptr(uint8_t **buf_ptr)
 {
     int ret = SUCCESS;
     const char *dev_udmabuf = "/dev/udmabuf0";
 
-    ret = get_cma_ptr(dev_udmabuf, buf_ptr);
+    //get buf size 
+    int buf_size = get_cma_size();
+    if( buf_size == 0){
+        fprintf(stderr, "Could not get cma size\n");
+        return FAILED;
+    }
+
+    ret = get_cma_ptr(dev_udmabuf, buf_ptr, buf_size);
     return ret;
 }
 bool unmask_irq(void)
@@ -235,7 +259,7 @@ bool unmask_irq(void)
     uint32_t info = 1; /* unmask */
 
     //setup and unmask irq
-    if((ret  = setup_irq(uio_name, &uio_fd)) {
+    if((ret  = setup_irq(uio_name, &uio_fd))) {
         fprintf(stderr, "Could not get uio_fd in unmask_irq()\n");
         return FAILED;
     }
@@ -261,7 +285,7 @@ bool wait_irq(void)
     ssize_t nb;
 
     //setup and unmask irq
-    if((ret  = setup_irq(uio_name, &uio_fd)){
+    if((ret  = setup_irq(uio_name, &uio_fd))){
         fprintf(stderr, "Could not get uio_fd in wait_irq()\n");
         return FAILED;
     }
@@ -271,7 +295,7 @@ bool wait_irq(void)
             .events = POLLIN,
     };
 
-    int ret = poll(&uio_fds, 1, -1);
+    ret = poll(&uio_fds, 1, -1);
     if (ret >= 1) {
         nb = read(uio_fd, &info, sizeof(info));
         if (nb == (ssize_t)sizeof(info)) {

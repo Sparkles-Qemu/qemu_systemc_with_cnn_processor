@@ -17,7 +17,7 @@
 #define OUPUT_FEATURE_MAP_OFFSET (512*sizeof(int))
 #define OUPUT_FEATURE_MAP_SZ 64
 
-bool program_dmas(unsigned char *dma_ptr, unsigned int src, unsigned int dst, int len)
+bool program_dmas(uint8_t *dma_ptr, uint32_t src, uint32_t dst, int len)
 {
     int ret = SUCCESS;
     int ctr_flag = 1;
@@ -45,7 +45,8 @@ bool program_dmas(unsigned char *dma_ptr, unsigned int src, unsigned int dst, in
 
     return ret;
 }
-bool send_weights(unsigned char *pe_ptr, const int *weights, int num_weights)
+
+bool send_weights(uint8_t *pe_ptr, const int *weights, int num_weights)
 {
     int ret = SUCCESS;
     int i;
@@ -61,26 +62,10 @@ bool send_weights(unsigned char *pe_ptr, const int *weights, int num_weights)
 
     return SUCCESS;
 }
-bool send_descriptors(unsigned char *dma_ptr, const int *descriptors, int num_descriptors) 
-{
-    int ret = SUCCESS;
-    int i;
 
-    if(dma_ptr == NULL || descriptors == NULL) {
-        fprintf(stderr, "Cant send descriptors with null pointers\n");
-        return FAILED;
-    }
 
-    for(i = 0; i < num_descriptors; i++){
 
-		memcpy(dma_ptr, (&descriptors[i]), DESCRIPTOR_SZ); 
-
-	}
-
-    return ret;
-}
-
-bool reset_processor(unsigned char *base_mmr)
+bool reset_processor(uint8_t *base_mmr)
 {
     int ret = SUCCESS;
     int reset_modules;
@@ -102,7 +87,7 @@ bool reset_processor(unsigned char *base_mmr)
 }
 
 
-bool enable_processor(unsigned char *base_mmr)
+bool enable_processor(uint8_t *base_mmr)
 {
     int ret = SUCCESS;
     int enable_modules;
@@ -118,7 +103,7 @@ bool enable_processor(unsigned char *base_mmr)
     return ret;
 }
 
-bool disable_processor(unsigned char *base_mmr)
+bool disable_processor(uint8_t *base_mmr)
 {
     int ret = SUCCESS;
     int enable_modules;
@@ -148,7 +133,7 @@ bool setup_irq(const char *uio_name, int *uio_fd)
     return SUCCESS;
 }
 
-bool get_cma_addr(const char *udmabuf_phy_addr, unsigned int *phy_addr)
+bool get_cma_addr(const char *udmabuf_phy_addr, uint32_t *phy_addr)
 {
     int ret = SUCCESS;
     int fd;
@@ -167,7 +152,7 @@ bool get_cma_addr(const char *udmabuf_phy_addr, unsigned int *phy_addr)
 
     return ret;
 }
-bool get_cma_buf_size(const char *udmabuf_size, unsigned int *size)
+bool get_cma_buf_size(const char *udmabuf, uint32_t *size)
 {
     int ret = SUCCESS;
     int fd;
@@ -175,7 +160,7 @@ bool get_cma_buf_size(const char *udmabuf_size, unsigned int *size)
     unsigned char attr[1024];
 
     //extract size
-	if ((fd  = open(udmabuf_size, O_RDONLY)) != -1) {
+	if ((fd  = open(udmabuf, O_RDONLY)) != -1) {
 		read(fd, attr, 1024);
 		sscanf(attr, "%d", size);
 		close(fd);
@@ -187,18 +172,18 @@ bool get_cma_buf_size(const char *udmabuf_size, unsigned int *size)
     return ret;
 }
 
-bool get_cma_ptr(const char *dev_udmabuf, unsigned char **buf_ptr)
+bool get_cma_ptr(const char *dev_udmabuf, uint8_t **buf_ptr, int buf_size)
 {
     int ret = SUCCESS;
     int fd_dmabuf; 
     if ((fd_dmabuf = open(dev_udmabuf, O_RDWR))  == -1) {
 
-        fprintf(stderr, "Could not open /de/udmabuf0");
+        fprintf(stderr, "Could not open %s\n", dev_udmabuf);
         close(fd_dmabuf);
         return FAILED;
     }
 
-    *(buf_ptr) = (unsigned char *)mmap(NULL, buf_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd_dmabuf, 0);
+    *(buf_ptr) = (uint8_t *)mmap(NULL, buf_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd_dmabuf, 0);
 
     if(*(buf_ptr) == NULL) {
 
@@ -208,7 +193,8 @@ bool get_cma_ptr(const char *dev_udmabuf, unsigned char **buf_ptr)
 
     return ret;
 }
-bool get_io_access(unsigned char **base_ptr, int device_addr)
+
+bool get_io_access(uint8_t **base_ptr, uint32_t device_addr)
 {
     int ret = SUCCESS;
     int fd;
