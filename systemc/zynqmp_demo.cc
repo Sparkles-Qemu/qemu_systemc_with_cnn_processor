@@ -49,6 +49,7 @@ using namespace std;
 #include "dma_socket_wrapper.h"
 #include "xilinx-zynqmp.h"
 #include "pe_socket_wrapper.h"
+#include "Processor.h"
 #include "checkers/pc-axilite.h"
 #include "tlm-bridges/tlm2axilite-bridge.h"
 #include "tlm-bridges/tlm2axi-bridge.h"
@@ -79,8 +80,9 @@ SC_MODULE(Top)
 	memory mem;
 	regs mmr;
 	debugdev *debug;
-  dma_socket_wrapper *test_dma1[DMA_SOCKET_WRAPPERS];
-  pe_socket_wrapper *test_pe[PE_GROUP_WRAPPERS];
+	Processor *processor;
+  	dma_socket_wrapper *test_dma1[DMA_SOCKET_WRAPPERS];
+  	pe_socket_wrapper *test_pe[PE_GROUP_WRAPPERS];
 	demodma *dma[NR_DEMODMA];
 
 	sc_signal<bool> rst, rst_n;
@@ -610,43 +612,35 @@ SC_MODULE(Top)
                 tlm2apb_tmr->pwdata(apbsig_timer_pwdata);
                 tlm2apb_tmr->prdata(apbsig_timer_prdata);
                 tlm2apb_tmr->pready(apbsig_timer_pready);
-		mem.processor_test_bench = new processor_tb("processor_tb", &mmr.mmr.enable_tb);
-    mem.processor_test_bench->mmr = (&mmr);
-    mem.processor_test_bench->processor = new Processor("Processor", reinterpret_cast<float *>(mem.mem), mmr.reset, mmr.enable);
-    mem.processor_test_bench->processor->clk(*clk);
-		mem.processor_test_bench->clk(*clk);
-
-
-
-	mem.processor_test_bench->processor->loopback.trans_finished(dma[1]->transfer_ready);
-
-
+    processor = new Processor("Processor", reinterpret_cast<float *>(mem.mem), mmr.reset, mmr.enable);
+    processor->clk(*clk);
+	processor->loopback.trans_finished(dma[1]->transfer_ready);
 
     //Manual connection of dma
-    test_dma1[0]->dma_ptr = (&mem.processor_test_bench->processor->left.dma_mm2s);
-    test_dma1[1]->dma_ptr = (&mem.processor_test_bench->processor->left.dma_s2mm1);
-    test_dma1[2]->dma_ptr = (&mem.processor_test_bench->processor->left.dma_s2mm2);
-    test_dma1[3]->dma_ptr = (&mem.processor_test_bench->processor->left.dma_s2mm3);
-    test_dma1[4]->dma_ptr = (&mem.processor_test_bench->processor->right.branch0.group0.dma_mm2s);
-    test_dma1[5]->dma_ptr = (&mem.processor_test_bench->processor->right.branch0.group1.dma_mm2s);
-    test_dma1[6]->dma_ptr = (&mem.processor_test_bench->processor->right.branch0.group2.dma_mm2s);
-    test_dma1[7]->dma_ptr = (&mem.processor_test_bench->processor->right.branch1.group0.dma_mm2s);
-    test_dma1[8]->dma_ptr = (&mem.processor_test_bench->processor->right.branch1.group1.dma_mm2s);
-    test_dma1[9]->dma_ptr = (&mem.processor_test_bench->processor->right.branch1.group2.dma_mm2s);
-    test_dma1[10]->dma_ptr = (&mem.processor_test_bench->processor->right.branch2.group0.dma_mm2s);
-    test_dma1[11]->dma_ptr = (&mem.processor_test_bench->processor->right.branch2.group1.dma_mm2s);
-    test_dma1[12]->dma_ptr = (&mem.processor_test_bench->processor->right.branch2.group2.dma_mm2s);
-    test_dma1[13]->dma_ptr = (&mem.processor_test_bench->processor->loopback);
+    test_dma1[0]->dma_ptr = (&processor->left.dma_mm2s);
+    test_dma1[1]->dma_ptr = (&processor->left.dma_s2mm1);
+    test_dma1[2]->dma_ptr = (&processor->left.dma_s2mm2);
+    test_dma1[3]->dma_ptr = (&processor->left.dma_s2mm3);
+    test_dma1[4]->dma_ptr = (&processor->right.branch0.group0.dma_mm2s);
+    test_dma1[5]->dma_ptr = (&processor->right.branch0.group1.dma_mm2s);
+    test_dma1[6]->dma_ptr = (&processor->right.branch0.group2.dma_mm2s);
+    test_dma1[7]->dma_ptr = (&processor->right.branch1.group0.dma_mm2s);
+    test_dma1[8]->dma_ptr = (&processor->right.branch1.group1.dma_mm2s);
+    test_dma1[9]->dma_ptr = (&processor->right.branch1.group2.dma_mm2s);
+    test_dma1[10]->dma_ptr = (&processor->right.branch2.group0.dma_mm2s);
+    test_dma1[11]->dma_ptr = (&processor->right.branch2.group1.dma_mm2s);
+    test_dma1[12]->dma_ptr = (&processor->right.branch2.group2.dma_mm2s);
+    test_dma1[13]->dma_ptr = (&processor->loopback);
     
-    test_pe[0]->pe_group_ptr = (&mem.processor_test_bench->processor->right.branch0.group0);
-    test_pe[1]->pe_group_ptr = (&mem.processor_test_bench->processor->right.branch0.group1);
-    test_pe[2]->pe_group_ptr = (&mem.processor_test_bench->processor->right.branch0.group2);
-    test_pe[3]->pe_group_ptr = (&mem.processor_test_bench->processor->right.branch1.group0);
-    test_pe[4]->pe_group_ptr = (&mem.processor_test_bench->processor->right.branch1.group1);
-    test_pe[5]->pe_group_ptr = (&mem.processor_test_bench->processor->right.branch1.group2);
-    test_pe[6]->pe_group_ptr = (&mem.processor_test_bench->processor->right.branch2.group0);
-    test_pe[7]->pe_group_ptr = (&mem.processor_test_bench->processor->right.branch2.group1);
-    test_pe[8]->pe_group_ptr = (&mem.processor_test_bench->processor->right.branch2.group2);
+    test_pe[0]->pe_group_ptr = (&processor->right.branch0.group0);
+    test_pe[1]->pe_group_ptr = (&processor->right.branch0.group1);
+    test_pe[2]->pe_group_ptr = (&processor->right.branch0.group2);
+    test_pe[3]->pe_group_ptr = (&processor->right.branch1.group0);
+    test_pe[4]->pe_group_ptr = (&processor->right.branch1.group1);
+    test_pe[5]->pe_group_ptr = (&processor->right.branch1.group2);
+    test_pe[6]->pe_group_ptr = (&processor->right.branch2.group0);
+    test_pe[7]->pe_group_ptr = (&processor->right.branch2.group1);
+    test_pe[8]->pe_group_ptr = (&processor->right.branch2.group2);
     
 		zynq.tie_off();
 	}

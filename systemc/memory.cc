@@ -35,8 +35,6 @@ using namespace std;
 
 memory::memory(sc_module_name name, sc_time latency, int size_)
 	: sc_module(name), socket("socket"), LATENCY(latency) 
-
-
 {
 	socket.register_b_transport(this, &memory::b_transport);
 	socket.register_get_direct_mem_ptr(this, &memory::get_direct_mem_ptr);
@@ -45,27 +43,6 @@ memory::memory(sc_module_name name, sc_time latency, int size_)
 	size = size_;
 	mem = new uint8_t[size];;
 	memset(&mem[0], 0, size);
-
-
-	SC_THREAD(accelerate);
-	dont_initialize();
-	sensitive << processor_start;
-}	
-
-void memory::accelerate()
-{
-	while(true) {
-		if(!(identifier == BIG_RAM_SIZE)){
-			wait(processor_start);
-		}
-		printf("made it to accelerate\n");
-		identifier = 0;
-		cout<<"Data right before sending it to  Processor" <<  endl;
-
-		//processor->compute(reset, enable);
-		//maa->test_bench();
-		processor_test_bench->done = 0;
-	}
 
 }
 
@@ -88,8 +65,10 @@ void memory::b_transport(tlm::tlm_generic_payload& trans, sc_time& delay)
 		return;
 	}
 
+#ifdef DEBUG
 	cout << "Address = " << addr << endl;
 	cout << "data = " << *(ptr) << endl;
+#endif
 
 	if (trans.get_command() == tlm::TLM_READ_COMMAND)
 		memcpy(ptr, &mem[addr], len);

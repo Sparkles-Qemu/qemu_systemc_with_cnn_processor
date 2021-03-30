@@ -26,7 +26,6 @@
 #define IMAGE_SIZE IMAGE_WIDTH *IMAGE_HEIGHT
 #define SMALL_RAM_SIZE IMAGE_SIZE
 #define BIG_RAM_SIZE 3 * IMAGE_SIZE
-#include "processor_tb.h"
 class memory
 : public sc_core::sc_module
 {
@@ -43,9 +42,6 @@ public:
                                   tlm::tlm_dmi& dmi_data);
 	virtual unsigned int transport_dbg(tlm::tlm_generic_payload& trans);
 
-	void accelerate();
-
-	processor_tb *processor_test_bench;
 	uint8_t	*mem;	
 
 	sc_event processor_start;
