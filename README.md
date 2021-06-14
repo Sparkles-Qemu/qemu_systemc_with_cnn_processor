@@ -61,3 +61,6 @@
 
 - https://harmoninstruments.com/posts/uio.html
     - uio user level example
+    
+## Simulated Architecture
+![Image description](https://github.com/Sparkles-Qemu/qemu_systemc_with_cnn_processor/blob/master/Arch.png)
