@@ -1,6 +1,10 @@
-# Read me to keep track of steps/documentation
+# Environment
 
-## Cosim irqs
+This project needs the enviornment built from: https://github.com/Sparkles-Qemu/qemu_vp_builder
+
+# Minimal current steps/documentation
+
+## Enabling Cosim irqs
 - Add debugdev to top level device tree so that linux kernel can see it
     - /home/peta/xilinx-zcu102-2019.2/project-spec/meta-user/recipes-bsp/device-tree/files/system-user.dtsi
     - add the new device directly under the amba bus 
@@ -37,14 +41,14 @@
 
 
 
-## What I have done so far 
-- I created a seperate .dtsi file 
+## UIO Driver performed pre-reqs 
+- Created a seperate .dtsi file 
     - this file contains the debugdev information 
 - This file in included on system-user.dtsi
-- I can visually confirm that the debugdevice has been added to the compiled device tree that QEMU  uses.
+- Visually confirm that the debugdevice has been added to the compiled device tree that QEMU  uses.
     - decompiled commmand: dtc -I dtb -O dts -o decompiled.dts system.dtb 
 
-- I added bootargs through petalinux-config
+- Added bootargs through petalinux-config
     - uio_pdrv_genirq.of_id=debuginc,generic-uio,ui_pdrv
 - Debugdev still not visible from QEMU side
 - Debugdev is not visible and recieving irqs from the PL side
