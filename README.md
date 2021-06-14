@@ -50,8 +50,10 @@
 - Debugdev is not visible and recieving irqs from the PL side
     - the main problem I was having was the bootargs were getting overwritten when I directly changed it on the system-user.dtsi file 
     - use the petalinux-config tool for this to work correctly
-
-
+    
+## Simulated Architecture
+![Image description](https://github.com/Sparkles-Qemu/qemu_systemc_with_cnn_processor/blob/master/Arch.png)
+    
 ## Resources 
 - https://forums.xilinx.com/t5/Embedded-Linux/Does-anyone-have-or-know-of-an-example-using-UIO-with-a-private/td-p/1083861
     - could be a problem with petalinux 2019.1
@@ -60,7 +62,5 @@
     - how the uio framework works
 
 - https://harmoninstruments.com/posts/uio.html
-    - uio user level example
-    
-## Simulated Architecture
-![Image description](https://github.com/Sparkles-Qemu/qemu_systemc_with_cnn_processor/blob/master/Arch.png)
+    - uio user level example  
+  
