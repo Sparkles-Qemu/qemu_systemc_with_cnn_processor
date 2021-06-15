@@ -1,3 +1,7 @@
+# Description
+
+A Qemu+SystemC Cosim enviornment for a cnn accelerator processor model based on distributed statically timed descriptor based address generators
+
 # Environment
 
 This project needs the enviornment built from: https://github.com/Sparkles-Qemu/qemu_vp_builder
